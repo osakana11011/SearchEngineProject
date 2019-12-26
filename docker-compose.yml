@@ -1,0 +1,36 @@
+version: '3'
+services:
+  search_engine:
+    image: search-engine:test
+    container_name: search_engine
+    build:
+      context: ./search_engine/
+    ports:
+      - 80:3000
+    privileged: true
+    tty: true
+    volumes:
+      - ./search_engine/:/var/www/go/src/search_engine_project/search_engine/
+  crawler:
+    image: crawler:test
+    container_name: crawler
+    build:
+      context: ./crawler/
+    privileged: true
+    tty: true
+    volumes:
+      - ./crawler/:/var/www/go/src/search_engine_project/crawler/
+  db:
+    image: mysql:5.7
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: docker
+      TZ: 'Asia/Tokyo'
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./mysql/data/:/var/lib/mysql/
+      - ./mysql/migration/:/var/www/migration/

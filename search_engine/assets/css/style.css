@@ -1,0 +1,9 @@
+.wrapper {
+  margin: 0 auto;
+  text-align: center;
+  padding: 40px 100px;
+}
+
+.search-box {
+  width: 200px;
+}
