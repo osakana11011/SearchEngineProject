@@ -40,7 +40,7 @@ func Crawling(url string, depth int) error {
 	}
 
 	// リクエスト送り過ぎると目付けられるので自重する
-	time.Sleep(1 * time.Second)
+	time.Sleep(500 * time.Millisecond)
 	res, err := http.Get(url)
 	if err != nil {
 		return err
