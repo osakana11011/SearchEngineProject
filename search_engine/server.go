@@ -1,9 +1,15 @@
 package main
 
 import (
+    "os"
+    "fmt"
+    "log"
     "html/template"
     "net/http"
-    // "net/url"
+    "search_engine_project/search_engine/database"
+
+    "github.com/joho/godotenv"
+    _ "github.com/go-sql-driver/mysql"
 )
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
@@ -13,12 +19,24 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func searchHandler(w http.ResponseWriter, r *http.Request) {
-    v := r.URL.Query()
+    q := r.URL.Query().Get("q")
+    pages, err := database.GetPages(q)
+    if err != nil {
+        log.Println(err)
+    }
+
     tpl := template.Must(template.ParseFiles("templates/search.html.tpl"))
-    tpl.Execute(w, v)
+    data := map[string]interface{}{"q": q, "pages": pages}
+    tpl.Execute(w, data)
 }
 
 func main() {
+    // dotenvファイルを環境変数にロード
+	err := godotenv.Load(fmt.Sprintf(".envfiles/%s.env", os.Getenv("GO_ENV")))
+	if err != nil {
+		log.Fatal(fmt.Sprintf("failed load .envfiles/%s.env", os.Getenv("GO_ENV")))
+    }
+
     http.Handle("/assets/css/", http.StripPrefix("/assets/css/", http.FileServer(http.Dir("assets/css/"))))
     http.HandleFunc("/", indexHandler)
     http.HandleFunc("/search/", searchHandler)
