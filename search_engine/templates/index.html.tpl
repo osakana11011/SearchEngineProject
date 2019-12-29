@@ -12,12 +12,8 @@
   </head>
 <body>
   <div class="wrapper">
-    <a href="https://google.com1">Google1</a>
-    <a href="https://google.com2">Google2</a>
-    <a href="https://google.com3">Google3</a>
     <form action="/search">
       <input type="text" name="q" class="search-box" />
-      <input type="submit" value="検索" />
     </form>
   </div>
 </body>

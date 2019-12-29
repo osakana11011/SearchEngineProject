@@ -1,3 +1,4 @@
 .DS_Store
 crawler/.envfiles/
 mysql/data/
+mysql/migration/wikipedia_sample_data.sql
