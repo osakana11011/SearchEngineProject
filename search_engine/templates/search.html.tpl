@@ -20,60 +20,6 @@
           </p>
         </div>
       {{ end }}
-      <!-- <div class="search-result">
-        <a class="search-result-title" href="#">タイトルタイトルタイトルタイトルタイトル</a>
-        <p class="search-result-description">
-          説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文
-        </p>
-      </div>
-      <div class="search-result">
-        <a class="search-result-title" href="#">タイトルタイトルタイトルタイトルタイトル</a>
-        <p class="search-result-description">
-          説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文
-        </p>
-      </div>
-      <div class="search-result">
-        <a class="search-result-title" href="#">タイトルタイトルタイトルタイトルタイトル</a>
-        <p class="search-result-description">
-          説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文
-        </p>
-      </div>
-      <div class="search-result">
-        <a class="search-result-title" href="#">タイトルタイトルタイトルタイトルタイトル</a>
-        <p class="search-result-description">
-          説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文
-        </p>
-      </div>
-      <div class="search-result">
-        <a class="search-result-title" href="#">タイトルタイトルタイトルタイトルタイトル</a>
-        <p class="search-result-description">
-          説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文
-        </p>
-      </div>
-      <div class="search-result">
-        <a class="search-result-title" href="#">タイトルタイトルタイトルタイトルタイトル</a>
-        <p class="search-result-description">
-          説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文
-        </p>
-      </div>
-      <div class="search-result">
-        <a class="search-result-title" href="#">タイトルタイトルタイトルタイトルタイトル</a>
-        <p class="search-result-description">
-          説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文
-        </p>
-      </div>
-      <div class="search-result">
-        <a class="search-result-title" href="#">タイトルタイトルタイトルタイトルタイトル</a>
-        <p class="search-result-description">
-          説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文
-        </p>
-      </div>
-      <div class="search-result">
-        <a class="search-result-title" href="#">タイトルタイトルタイトルタイトルタイトル</a>
-        <p class="search-result-description">
-          説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文
-        </p>
-      </div> -->
     </main>
   </body>
 </html>
