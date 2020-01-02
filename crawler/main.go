@@ -7,6 +7,7 @@ import (
 	"time"
 	"regexp"
 	"net/http"
+	// "strings"
 
 	"search_engine_project/crawler/database"
 
@@ -17,8 +18,6 @@ import (
 
 // Crawling ...
 func Crawling(url string, depth int) error {
-	log.Println("Crawling 「" + url + "」...")
-
 	if depth <= 0 {
 		log.Println("Stop crawling because depth is 0.")
 		return nil
@@ -56,6 +55,17 @@ func Crawling(url string, depth int) error {
 	// タイトル
 	titleSelection := doc.Find("title")
 	title := titleSelection.Text()
+
+	// bodySelection := doc.Find("body")
+	// bodyText := bodySelection.Text()
+	// bodyText = strings.NewReplacer(
+    //     "\r\n", "",
+    //     "\r", "",
+	// 	"\n", "",
+	// 	"\t", "",
+	// 	" ", "",
+    // ).Replace(bodyText)
+	// fmt.Println(bodyText)
 
 	// まだ登録されていないページなら、新規登録を行う
 	isRegisted, err := database.IsRegisted(url)
