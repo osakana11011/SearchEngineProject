@@ -7,14 +7,72 @@ import (
 	"time"
 	"regexp"
 	"net/http"
-	// "strings"
+	"strings"
 
 	"search_engine_project/crawler/database"
 
 	"github.com/joho/godotenv"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/bluele/mecab-golang"
 	_ "github.com/go-sql-driver/mysql"
 )
+
+// FormatText ...
+func FormatText(text string) string {
+	text = strings.NewReplacer(
+        "\r\n", "",
+        "\r", "",
+		"\n", "",
+		"\t", "",
+		" ", "",
+	).Replace(text)
+
+	return text
+}
+
+// MorphologicalAnalysis ...
+func MorphologicalAnalysis(text string) error {
+	m, err := mecab.New("-d /usr/lib64/mecab/dic/mecab-ipadic-neologd")
+	if err != nil {
+		return err
+	}
+	defer m.Destroy()
+
+	tg, err := m.NewTagger()
+	if err != nil {
+		return err
+	}
+	defer tg.Destroy()
+
+	lt, err := m.NewLattice(text)
+	if err != nil {
+		return err
+	}
+	defer lt.Destroy()
+
+	node := tg.ParseToNode(lt)
+	for {
+		word := node.Surface()
+		features := strings.Split(node.Feature(), ",")
+
+		// まだ登録されていない単語なら、新規登録を行う
+		isRegistedWord, err := database.IsRegistedWord(word)
+		if err != nil {
+			return err
+		}
+		if !isRegistedWord && features[0] == "名詞" {
+			registErr := database.RegistWord(word, features[0])
+			if registErr != nil {
+				return registErr
+			}
+		}
+
+		if node.Next() != nil {
+			break
+		}
+	}
+	return nil
+}
 
 // Crawling ...
 func Crawling(url string, depth int) error {
@@ -30,11 +88,11 @@ func Crawling(url string, depth int) error {
 		return nil
 	}
 
-	isRegistedRecently, err := database.IsRegistedRecently(url)
+	isRegistedPageRecently, err := database.IsRegistedPageRecently(url)
 	if err != nil {
 		return err
 	}
-	if isRegistedRecently {
+	if isRegistedPageRecently {
 		return nil
 	}
 
@@ -56,23 +114,20 @@ func Crawling(url string, depth int) error {
 	titleSelection := doc.Find("title")
 	title := titleSelection.Text()
 
-	// bodySelection := doc.Find("body")
-	// bodyText := bodySelection.Text()
-	// bodyText = strings.NewReplacer(
-    //     "\r\n", "",
-    //     "\r", "",
-	// 	"\n", "",
-	// 	"\t", "",
-	// 	" ", "",
-    // ).Replace(bodyText)
-	// fmt.Println(bodyText)
+	bodySelection := doc.Find("body")
+	bodyText := FormatText(bodySelection.Text())
+
+	morphologicalErr := MorphologicalAnalysis(bodyText)
+	if morphologicalErr != nil {
+		return morphologicalErr
+	}
 
 	// まだ登録されていないページなら、新規登録を行う
-	isRegisted, err := database.IsRegisted(url)
+	isRegistedPage, err := database.IsRegistedPage(url)
 	if err != nil {
 		return err
 	}
-	if !isRegisted {
+	if !isRegistedPage {
 		registErr := database.RegistPage(title, url)
 		if registErr != nil {
 			return registErr

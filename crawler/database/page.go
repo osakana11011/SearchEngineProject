@@ -18,8 +18,8 @@ func RegistPage(title string, url string) error {
 	return nil
 }
 
-// IsRegisted ...
-func IsRegisted(url string) (bool, error) {
+// IsRegistedPage ...
+func IsRegistedPage(url string) (bool, error) {
 	// DB接続
 	db, connectionErr := ConnectDB()
 	if connectionErr != nil {
@@ -38,7 +38,7 @@ func IsRegisted(url string) (bool, error) {
 }
 
 // IsRegistedRecently ...
-func IsRegistedRecently(url string) (bool, error) {
+func IsRegistedPageRecently(url string) (bool, error) {
 	// DB接続
 	db, connectionErr := ConnectDB()
 	if connectionErr != nil {
