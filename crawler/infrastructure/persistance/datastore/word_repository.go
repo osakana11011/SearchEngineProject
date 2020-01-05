@@ -35,3 +35,19 @@ func (r *WordRepository) Regist(word string) (int64, error) {
 
 	return lastInsertID, nil
 }
+
+// GetCounts ...
+func (r *WordRepository) GetCounts(word string) (int, error) {
+	// DB接続
+	db, err := connectDB()
+	if err != nil {
+		return 0, err
+	}
+	defer db.Close()
+
+	// 件数の取得
+	var counts int
+	db.QueryRow("SELECT COUNT(id) FROM words WHERE word = ?", word).Scan(&counts)
+
+	return counts, nil
+}
