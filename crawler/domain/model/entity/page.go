@@ -44,6 +44,7 @@ func CrawlPage(url string) (Page, error) {
 		"\n", "",
 		"\t", "",
 		" ", "",
+		"'", "",
 	).Replace(bodyText)
 	nounWords, err := extractNounWords(bodyText)
 	if err != nil {
@@ -97,7 +98,7 @@ func extractNounWords(text string) (map[string]int, error) {
 		word := node.Surface()
 		features := strings.Split(node.Feature(), ",")
 
-		if features[0] == "名詞" {
+		if word != "" && features[0] == "名詞" {
 			_, isKeyExist := nounWords[word]
 			if isKeyExist {
 				nounWords[word]++

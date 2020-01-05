@@ -19,5 +19,8 @@ func main() {
 	}
 
 	pageService := service.NewPageService()
-	pageService.Crawl("https://ja.wikipedia.org/wiki/Google", 10)
+	err = pageService.Crawl("https://ja.wikipedia.org/wiki/Google", 10)
+	if err != nil {
+		fmt.Println(err)
+	}
 }

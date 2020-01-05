@@ -1,6 +1,8 @@
 package datastore
 
 import (
+	"fmt"
+
 	"search_engine_project/crawler/domain/repository"
 )
 
@@ -34,6 +36,45 @@ func (r *WordRepository) Regist(word string) (int64, error) {
 	}
 
 	return lastInsertID, nil
+}
+
+// BulkInsert ...
+func (r *WordRepository) BulkInsert(words []string) error {
+	// 登録する単語が0の時はそのまま返す
+	if len(words) == 0 {
+		return nil
+	}
+
+	// DB接続
+	db, err := connectDB()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	// バルクインサートする回数
+	bulkNum := (int)(len(words) / 100.0) + 1
+	for i := 0; i < bulkNum; i++ {
+		// バルクインサート用のSQLを構築
+		bulkInsertSQL := "INSERT IGNORE INTO words (word, created_at, updated_at) VALUES "
+		wordsMass := words[i * 100 : i * 100 + 100]
+		for _, word := range wordsMass {
+			if word == "" {
+				continue
+			}
+			bulkInsertSQL += fmt.Sprintf("('%s', NOW(), NOW()), ", word)
+		}
+		bulkInsertSQL = bulkInsertSQL[:len(bulkInsertSQL)-2]
+
+		// 登録処理
+		fmt.Println(bulkInsertSQL)
+		_, err := db.Exec(bulkInsertSQL)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // GetID ...

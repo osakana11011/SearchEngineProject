@@ -53,13 +53,21 @@ func (x *pageService) Crawl(url string, depth int) error {
 	pageID, _ := pageRepository.Regist(page)
 
 	// 単語の登録(登録済みの単語は登録しない)
+	words := []string{}
 	for word := range page.NounWords {
-		counts, err := wordRepository.GetCounts(word)
-		if err != nil || counts > 0 {
-			continue
-		}
-		wordRepository.Regist(word)
+		words = append(words, word)
 	}
+	err = wordRepository.BulkInsert(words)
+	if err != nil {
+		return err
+	}
+	// for word := range page.NounWords {
+	// 	counts, err := wordRepository.GetCounts(word)
+	// 	if err != nil || counts > 0 {
+	// 		continue
+	// 	}
+	// 	wordRepository.Regist(word)
+	// }
 
 	// 転置インデックスへの登録
 	for word, counts := range page.NounWords {
