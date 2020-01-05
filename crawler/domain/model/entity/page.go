@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"fmt"
 	"time"
 	"strings"
 	"regexp"
@@ -14,7 +13,7 @@ import (
 type Page struct {
 	Title     string
 	URL       string
-	NounWords []string
+	NounWords map[string]int
 	Links     []string
 }
 
@@ -51,7 +50,6 @@ func CrawlPage(url string) (Page, error) {
 		return page, err
 	}
 	page.NounWords = nounWords
-	fmt.Println(strings.Join(nounWords, ", "))
 
 	// ページ内のリンクを全て取得
 	links := []string{}
@@ -74,7 +72,7 @@ func CrawlPage(url string) (Page, error) {
 }
 
 // extractNounWords ...
-func extractNounWords(text string) ([]string, error) {
+func extractNounWords(text string) (map[string]int, error) {
 	m, err := mecab.New("-d /usr/lib64/mecab/dic/mecab-ipadic-neologd")
 	if err != nil {
 		return nil, err
@@ -93,14 +91,19 @@ func extractNounWords(text string) ([]string, error) {
 	}
 	defer lt.Destroy()
 
-	nounWords := []string{}
+	nounWords := make(map[string]int)
 	node := tg.ParseToNode(lt)
 	for {
 		word := node.Surface()
 		features := strings.Split(node.Feature(), ",")
 
 		if features[0] == "名詞" {
-			nounWords = append(nounWords, word)
+			_, isKeyExist := nounWords[word]
+			if isKeyExist {
+				nounWords[word]++
+			} else {
+				nounWords[word] = 1
+			}
 		}
 
 		if node.Next() != nil {

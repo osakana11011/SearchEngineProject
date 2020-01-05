@@ -27,6 +27,7 @@ func NewPageService() PageService {
 func (x *pageService) Crawl(url string, depth int) error {
 	pageRepository := datastore.NewPageRepository()
 	wordRepository := datastore.NewWordRepository()
+	invertedIndexRepository := datastore.NewInvertedIndexRepository()
 
 	// 日本語版Wikipediaからしか取得しないようにする
 	r := regexp.MustCompile(`^https://ja.wikipedia.org/`)
@@ -49,15 +50,21 @@ func (x *pageService) Crawl(url string, depth int) error {
 	if err != nil {
 		return err
 	}
-	pageRepository.Regist(page)
+	pageID, _ := pageRepository.Regist(page)
 
 	// 単語の登録(登録済みの単語は登録しない)
-	for _, word := range page.NounWords {
+	for word := range page.NounWords {
 		counts, err := wordRepository.GetCounts(word)
 		if err != nil || counts > 0 {
 			continue
 		}
 		wordRepository.Regist(word)
+	}
+
+	// 転置インデックスへの登録
+	for word, counts := range page.NounWords {
+		wordID, _ := wordRepository.GetID(word)
+		invertedIndexRepository.Regist(pageID, wordID, counts)
 	}
 
 	// ページ内のリンクを巡回

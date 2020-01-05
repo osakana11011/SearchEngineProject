@@ -36,6 +36,22 @@ func (r *WordRepository) Regist(word string) (int64, error) {
 	return lastInsertID, nil
 }
 
+// GetID ...
+func (r *WordRepository) GetID(word string) (int64, error) {
+	// DB接続
+	db, err := connectDB()
+	if err != nil {
+		return 0, err
+	}
+	defer db.Close()
+
+	// IDの取得
+	var id int64
+	db.QueryRow("SELECT id FROM words WHERE word = ? LIMIT 1", word).Scan(&id)
+
+	return id, nil
+}
+
 // GetCounts ...
 func (r *WordRepository) GetCounts(word string) (int, error) {
 	// DB接続
