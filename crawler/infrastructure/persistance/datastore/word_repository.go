@@ -2,6 +2,7 @@ package datastore
 
 import (
 	"fmt"
+	"math"
 
 	"search_engine_project/crawler/domain/repository"
 )
@@ -33,7 +34,10 @@ func (r *WordRepository) BulkInsert(words []string) error {
 	for i := 0; i < bulkNum; i++ {
 		// バルクインサート用のSQLを構築
 		bulkInsertSQL := "INSERT IGNORE INTO words (word, created_at, updated_at) VALUES "
-		wordsMass := words[i * 100 : i * 100 + 100]
+		to := i * 100
+		from := (int)(math.Min((float64)(i*100+100), (float64)(len(words))))
+		fmt.Println(to, from)
+		wordsMass := words[to:from]
 		for _, word := range wordsMass {
 			if word == "" {
 				continue
