@@ -19,7 +19,7 @@ func main() {
 	}
 
 	pageService := service.NewPageService()
-	err = pageService.Crawl("https://ja.wikipedia.org/wiki/%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB:Inkscape_logo_2.svg", 10)
+	err = pageService.Crawl("https://ja.wikipedia.org/wiki/Google", 10)
 	if err != nil {
 		fmt.Println(err)
 	}

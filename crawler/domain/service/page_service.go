@@ -1,10 +1,8 @@
 package service
 
 import (
-	"regexp"
-	"errors"
 	"fmt"
-	"log"
+	"regexp"
 
 	"search_engine_project/crawler/domain/model/entity"
 	"search_engine_project/crawler/infrastructure/persistance/datastore"
@@ -25,34 +23,70 @@ func NewPageService() PageService {
 
 // Crawl ...
 func (x *pageService) Crawl(url string, depth int) error {
-	pageRepository := datastore.NewPageRepository()
-	wordRepository := datastore.NewWordRepository()
-	invertedIndexRepository := datastore.NewInvertedIndexRepository()
-
-	// 日本語版Wikipediaからしか取得しないようにする
-	r := regexp.MustCompile(`^https://ja.wikipedia.org/`)
-	if !r.MatchString(url) {
-		log.Println("Stop crawling because this URL's domain isn't 「ja.wikipecia.org」.")
-		return errors.New("crawl only 'ja.wikipecia.org' domain")
+	// クロールするドメインに制約を掛ける
+	if !isAcceptDomain(url) {
+		return nil
 	}
 
-	// 既に登録されている場合はクロールしにいかない
-	counts, err := pageRepository.GetCountsByURL(url)
-	if err != nil {
-		return err
-	}
-	if counts > 0 {
-		return fmt.Errorf("already registed %s", url)
-	}
-
-	// クローリング
+	// ページ情報の取得
 	page, err := entity.CrawlPage(url)
 	if err != nil {
 		return err
 	}
-	pageID, _ := pageRepository.Regist(page)
 
-	// 単語の登録(登録済みの単語は登録しない)
+	// 登録済みのページの場合は、ページ/単語/転置インデックスの更新を行わない
+	isRegisted := isRegistedPage(url)
+	if err != nil {
+		return err
+	}
+	if !isRegisted {
+		err := registPageInfo(page)
+		if err != nil {
+			return err
+		}
+	}
+
+	// ページ内のリンクを巡回
+	for _, link := range page.Links {
+		x.Crawl(link, depth - 1)
+	}
+
+	return nil
+}
+
+// isAcceptDomain ...
+// 日本語版Wikipediaからしか取得しないようにする
+func isAcceptDomain(url string) bool {
+	r := regexp.MustCompile(`^https://ja.wikipedia.org/`)
+	return r.MatchString(url)
+}
+
+// isRegistedPage ...
+func isRegistedPage(url string) bool {
+	pageRepository := datastore.NewPageRepository()
+
+	counts, err := pageRepository.GetCountsByURL(url)
+	if err != nil {
+		return false
+	}
+
+	return (counts > 0)
+}
+
+// registPageInfo ...
+// TODO: Webページは更新が入ることがあるので、登録済みの場合は過去の情報を破棄して新しい情報を登録するようにしたい
+func registPageInfo(page entity.Page) error {
+	pageRepository := datastore.NewPageRepository()
+	wordRepository := datastore.NewWordRepository()
+	invertedIndexRepository := datastore.NewInvertedIndexRepository()
+
+	// ページの登録
+	pageID, err := pageRepository.Regist(page)
+	if err != nil {
+		return err
+	}
+
+	// 単語情報の登録(登録済みの単語は登録しない)
 	words := []string{}
 	for word := range page.NounWords {
 		words = append(words, word)
@@ -61,23 +95,11 @@ func (x *pageService) Crawl(url string, depth int) error {
 	if err != nil {
 		return err
 	}
-	// for word := range page.NounWords {
-	// 	counts, err := wordRepository.GetCounts(word)
-	// 	if err != nil || counts > 0 {
-	// 		continue
-	// 	}
-	// 	wordRepository.Regist(word)
-	// }
 
 	// 転置インデックスへの登録
 	for word, counts := range page.NounWords {
 		wordID, _ := wordRepository.GetID(word)
 		invertedIndexRepository.Regist(pageID, wordID, counts)
-	}
-
-	// ページ内のリンクを巡回
-	for _, link := range page.Links {
-		x.Crawl(link, depth - 1)
 	}
 
 	return nil
