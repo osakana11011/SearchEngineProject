@@ -1,4 +1,5 @@
 .DS_Store
+.vscode/
 crawler/.envfiles/
 search_engine/.envfiles/
 mysql/data/

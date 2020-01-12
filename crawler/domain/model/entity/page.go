@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"time"
 	"strings"
 	"regexp"
 
@@ -11,18 +10,15 @@ import (
 
 // Page ...
 type Page struct {
-	Title     string
-	URL       string
-	NounWords map[string]int
-	Links     []string
+	Title string           // ページのタイトル
+	URL   string           // ページのURL
+	Words map[string]*Word  // 単語にポスティングリストが紐づく
+	Links []string         // ページ内に存在するリンク
 }
 
 // CrawlPage ...
 func CrawlPage(url string) (Page, error) {
 	page := Page{}
-
-	// サーバに負荷を掛けすぎないように自重
-	time.Sleep(1 * time.Second)
 
 	// URLからページ情報の取得
 	doc, err := goquery.NewDocument(url)
@@ -30,13 +26,24 @@ func CrawlPage(url string) (Page, error) {
 		return page, err
 	}
 
-	// タイトル
+	// 形態素解析して、ページ内の名詞単語を全て取得
+	words, err := extractNounWords(doc)
+	if err != nil {
+		return page, err
+	}
+
+	// ページの情報を詰めて返す
 	page.Title = doc.Find("title").Text()
-
-	// URL
 	page.URL = url
+	page.Words = words
+	page.Links = extractLinks(doc)
 
-	// 形態素解析して、ページ内の単語を全て取得
+	return page, nil
+}
+
+// extractNounWords ...
+func extractNounWords(doc *goquery.Document) (map[string]*Word, error) {
+	// 本文を抜き出す
 	bodyText := doc.Find("body").Text()
 	bodyText = strings.NewReplacer(
         "\r\n", "",
@@ -46,71 +53,74 @@ func CrawlPage(url string) (Page, error) {
 		" ", "",
 		"'", "",
 	).Replace(bodyText)
-	nounWords, err := extractNounWords(bodyText)
-	if err != nil {
-		return page, err
-	}
-	page.NounWords = nounWords
 
-	// ページ内のリンクを全て取得
-	links := []string{}
-	anchorSelections := doc.Find("a")
-	anchorSelections.Each(func(_ int, anchorSelection *goquery.Selection) {
-		childURL, success := anchorSelection.Attr("href")
-		if success {
-			// Wikipedia内のリンクは相対パスで書かれていることがあるので補う
-			r := regexp.MustCompile(`^/wiki/*`)
-			if r.MatchString(childURL) {
-				childURL = "https://ja.wikipedia.org" + childURL
-			}
-
-			links = append(links, childURL)
-		}
-	})
-	page.Links = links
-
-	return page, nil
-}
-
-// extractNounWords ...
-func extractNounWords(text string) (map[string]int, error) {
+	// 形態素解析を行う行う為にMeCabの準備を行う
 	m, err := mecab.New("-d /usr/lib64/mecab/dic/mecab-ipadic-neologd")
 	if err != nil {
 		return nil, err
 	}
 	defer m.Destroy()
-
 	tg, err := m.NewTagger()
 	if err != nil {
 		return nil, err
 	}
 	defer tg.Destroy()
 
-	lt, err := m.NewLattice(text)
+	// 形態素解析
+	lt, err := m.NewLattice(bodyText)
 	if err != nil {
 		return nil, err
 	}
 	defer lt.Destroy()
 
-	nounWords := make(map[string]int)
+	// 形態素解析の結果から、「名詞」のみ抜き出して単語リストを構築する
+	var i int
+	words := map[string]*Word{}
 	node := tg.ParseToNode(lt)
-	for {
+	for i = 0; ; i++ {
+		// 文末まで行くと、node.Next()で警告を吐くようになるので、それが出たらループを抜ける
+		if node.Next() != nil {
+			break
+		}
+
 		word := node.Surface()
 		features := strings.Split(node.Feature(), ",")
 
 		if word != "" && features[0] == "名詞" {
-			_, isKeyExist := nounWords[word]
-			if isKeyExist {
-				nounWords[word]++
-			} else {
-				nounWords[word] = 1
+			_, isKeyExist := words[word]
+			if !isKeyExist {
+				words[word] = &Word{}
 			}
-		}
-
-		if node.Next() != nil {
-			break
+			wordPointer := words[word]
+			wordPointer.AddOffset(i)
 		}
 	}
 
-	return nounWords, nil
+	// 各単語についてTF値を求める
+	for _, word := range words {
+		word.CalcTF(i)
+	}
+
+	return words, nil
+}
+
+// extractLinks ...
+func extractLinks(doc *goquery.Document) []string {
+	links := []string{}
+
+	// Wikipedia内のリンクは相対パスで書かれていることがあるので補う
+	r := regexp.MustCompile(`^/wiki/*`)
+
+	// aタグを全て見つけ出してhrefを抜き出していく
+	anchorSelections := doc.Find("a")
+	anchorSelections.Each(func(_ int, anchorSelection *goquery.Selection) {
+		url, success := anchorSelection.Attr("href")
+		if success {
+			if r.MatchString(url) {
+				url = "https://ja.wikipedia.org" + url
+			}
+			links = append(links, url)
+		}
+	})
+	return links
 }

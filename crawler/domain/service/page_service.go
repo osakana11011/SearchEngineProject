@@ -1,7 +1,7 @@
 package service
 
 import (
-	"fmt"
+	"time"
 	"regexp"
 
 	"search_engine_project/crawler/domain/model/entity"
@@ -23,32 +23,50 @@ func NewPageService() PageService {
 
 // Crawl ...
 func (x *pageService) Crawl(url string, depth int) error {
+	if depth <= 0 {
+		return nil
+	}
+
 	// クロールするドメインに制約を掛ける
 	if !isAcceptDomain(url) {
 		return nil
 	}
 
+	// 登録済みのページの場合は、ページ/単語/転置インデックスの更新を行わない
+	isRegisted := isRegistedPage(url)
+	if isRegisted {
+		return nil
+	}
+
 	// ページ情報の取得
+	// サーバに負荷を掛けすぎないように自重
+	time.Sleep(1 * time.Second)
 	page, err := entity.CrawlPage(url)
 	if err != nil {
 		return err
 	}
 
 	// 登録済みのページの場合は、ページ/単語/転置インデックスの更新を行わない
-	isRegisted := isRegistedPage(url)
+	err = registPageInfo(page)
 	if err != nil {
 		return err
 	}
-	if !isRegisted {
-		err := registPageInfo(page)
-		if err != nil {
-			return err
-		}
+
+	// ミニ転置インデックスに追加されているドキュメント数が一定数以上なら、DBへの登録を行う
+	invertedIndex := entity.GetInvertedIndex()
+	if invertedIndex.DocumentCounts >= 1 {
+		invertedIndexService := NewInvertedIndex()
+		invertedIndexService.Regist(invertedIndex)
+		entity.InitInvertedIndex()
 	}
 
 	// ページ内のリンクを巡回
 	for _, link := range page.Links {
-		x.Crawl(link, depth - 1)
+		err := x.Crawl(link, depth - 1)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -77,8 +95,6 @@ func isRegistedPage(url string) bool {
 // TODO: Webページは更新が入ることがあるので、登録済みの場合は過去の情報を破棄して新しい情報を登録するようにしたい
 func registPageInfo(page entity.Page) error {
 	pageRepository := datastore.NewPageRepository()
-	wordRepository := datastore.NewWordRepository()
-	invertedIndexRepository := datastore.NewInvertedIndexRepository()
 
 	// ページの登録
 	pageID, err := pageRepository.Regist(page)
@@ -86,21 +102,9 @@ func registPageInfo(page entity.Page) error {
 		return err
 	}
 
-	// 単語情報の登録(登録済みの単語は登録しない)
-	words := []string{}
-	for word := range page.NounWords {
-		words = append(words, word)
-	}
-	err = wordRepository.BulkInsert(words)
-	if err != nil {
-		return err
-	}
-
-	// 転置インデックスへの登録
-	for word, counts := range page.NounWords {
-		wordID, _ := wordRepository.GetID(word)
-		invertedIndexRepository.Regist(pageID, wordID, counts)
-	}
+	// メモリ上に単語とミニ転置インデックスを登録
+	invertedIndex := entity.GetInvertedIndex()
+	invertedIndex.AddDocument(pageID, page)
 
 	return nil
 }

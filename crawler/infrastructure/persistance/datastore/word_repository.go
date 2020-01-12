@@ -36,18 +36,13 @@ func (r *WordRepository) BulkInsert(words []string) error {
 		bulkInsertSQL := "INSERT IGNORE INTO words (word, created_at, updated_at) VALUES "
 		to := i * 100
 		from := (int)(math.Min((float64)(i*100+100), (float64)(len(words))))
-		fmt.Println(to, from)
 		wordsMass := words[to:from]
 		for _, word := range wordsMass {
-			if word == "" {
-				continue
-			}
 			bulkInsertSQL += fmt.Sprintf("('%s', NOW(), NOW()), ", word)
 		}
 		bulkInsertSQL = bulkInsertSQL[:len(bulkInsertSQL)-2]
 
 		// 登録処理
-		fmt.Println(bulkInsertSQL)
 		_, err := db.Exec(bulkInsertSQL)
 		if err != nil {
 			return err
