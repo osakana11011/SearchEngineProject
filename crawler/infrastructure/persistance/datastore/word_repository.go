@@ -3,6 +3,7 @@ package datastore
 import (
 	"fmt"
 	"math"
+	"strings"
 
 	"search_engine_project/crawler/domain/repository"
 )
@@ -38,6 +39,7 @@ func (r *WordRepository) BulkInsert(words []string) error {
 		from := (int)(math.Min((float64)(i*100+100), (float64)(len(words))))
 		wordsMass := words[to:from]
 		for _, word := range wordsMass {
+			word = strings.NewReplacer("'", "",).Replace(word)
 			bulkInsertSQL += fmt.Sprintf("('%s', NOW(), NOW()), ", word)
 		}
 		bulkInsertSQL = bulkInsertSQL[:len(bulkInsertSQL)-2]

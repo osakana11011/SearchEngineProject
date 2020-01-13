@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"fmt"
 	"regexp"
 	"strconv"
 
@@ -42,7 +41,6 @@ func GetDocumentByCrawl(url string) (Document, error) {
 	d.InvertedList = getInvertedList(words)
 	d.Links = extractLinks(doc)
 
-	fmt.Println(d.InvertedList)
 	return d, nil
 }
 

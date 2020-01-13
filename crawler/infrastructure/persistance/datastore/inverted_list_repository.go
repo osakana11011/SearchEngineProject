@@ -40,7 +40,6 @@ func (r *InvertedListRepository) BulkInsert(invertedList entity.InvertedList) er
 		}
 		bulkInsertSQL = bulkInsertSQL[:len(bulkInsertSQL)-2]
 
-		fmt.Println(word, bulkInsertSQL)
 		// 登録処理
 		_, err = db.Exec(bulkInsertSQL)
 		if err != nil {

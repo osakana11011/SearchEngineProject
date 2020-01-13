@@ -58,7 +58,7 @@ func (x *documentService) Crawl(url string, depth int) error {
 	invertedIndex.AddDocument(documentID, document)
 
 	// ミニ転置インデックスに追加されているドキュメント数が一定数以上ならDBへの登録を行い、ミニ転置インデックスを初期化する
-	if invertedIndex.DocumentCounts >= 1 {
+	if invertedIndex.DocumentCounts >= 15 {
 		invertedIndexService := NewInvertedIndexService()
 		invertedIndexService.Regist(invertedIndex)
 		entity.InitInvertedIndex()
