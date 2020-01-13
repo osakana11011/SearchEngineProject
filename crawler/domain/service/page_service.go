@@ -54,7 +54,7 @@ func (x *pageService) Crawl(url string, depth int) error {
 
 	// ミニ転置インデックスに追加されているドキュメント数が一定数以上なら、DBへの登録を行う
 	invertedIndex := entity.GetInvertedIndex()
-	if invertedIndex.DocumentCounts >= 1 {
+	if invertedIndex.DocumentCounts >= 30 {
 		invertedIndexService := NewInvertedIndex()
 		invertedIndexService.Regist(invertedIndex)
 		entity.InitInvertedIndex()

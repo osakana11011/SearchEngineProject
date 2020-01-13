@@ -49,18 +49,3 @@ func (r *InvertedListRepository) BulkInsert(invertedList map[string][]entity.Pos
 
 	return nil
 }
-
-// Regist ...
-func (r *InvertedListRepository) Regist(pageID int64, wordID int64, counts int) error {
-	// DB接続
-	db, err := connectDB()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
-
-	// 登録処理
-	db.Exec("INSERT INTO inverted_index(page_id, word_id, counts, created_at, updated_at) VALUES(?, ?, ?, NOW(), NOW())", pageID, wordID, counts)
-
-	return nil
-}
