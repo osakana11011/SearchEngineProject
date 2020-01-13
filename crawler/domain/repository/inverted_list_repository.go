@@ -6,5 +6,5 @@ import (
 
 // InvertedListRepository ...
 type InvertedListRepository interface {
-	BulkInsert(invertedList map[string][]entity.PostingList) error
+	BulkInsert(invertedList entity.InvertedList) error
 }

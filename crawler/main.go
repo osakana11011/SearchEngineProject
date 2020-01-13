@@ -18,8 +18,8 @@ func main() {
 		log.Fatal(fmt.Sprintf("failed load .envfiles/%s.env", os.Getenv("GO_ENV")))
 	}
 
-	pageService := service.NewPageService()
-	err = pageService.Crawl("https://ja.wikipedia.org/wiki/Google", 10)
+	documentService := service.NewDocumentService()
+	err = documentService.Crawl("https://ja.wikipedia.org/wiki/Google", 10)
 	if err != nil {
 		fmt.Println(err)
 	}

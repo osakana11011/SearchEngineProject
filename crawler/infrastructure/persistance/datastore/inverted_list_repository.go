@@ -17,7 +17,7 @@ func NewInvertedListRepository() repository.InvertedListRepository {
 }
 
 // BulkInsert ...
-func (r *InvertedListRepository) BulkInsert(invertedList map[string][]entity.PostingList) error {
+func (r *InvertedListRepository) BulkInsert(invertedList entity.InvertedList) error {
 	// DB接続
 	db, err := connectDB()
 	if err != nil {
@@ -27,19 +27,20 @@ func (r *InvertedListRepository) BulkInsert(invertedList map[string][]entity.Pos
 
 	wordRepository := NewWordRepository()
 
-	for word, postingList := range invertedList {
+	for word, documentWords := range invertedList {
 		wordID, err := wordRepository.GetID(word)
 		if err != nil {
 			continue
 		}
-		bulkInsertSQL := "INSERT IGNORE INTO inverted_list (word_id, page_id, tf, offset_list, created_at, updated_at) VALUES "
-		for _, posting := range postingList {
-			offsetList := strings.Join(posting.Word.OffsetList, ",")
-			bulkInsertSQL += fmt.Sprintf("('%d', '%d', '%f', '%s', NOW(), NOW()), ", wordID, posting.PageID, posting.TF, offsetList)
+		bulkInsertSQL := "INSERT IGNORE INTO inverted_list (word_id, document_id, tf, offset_list, created_at, updated_at) VALUES "
+
+		for documentID, documentWord := range documentWords {
+			offsetList := strings.Join(documentWord.OffsetList, ",")
+			bulkInsertSQL += fmt.Sprintf("('%d', '%d', '%f', '%s', NOW(), NOW()), ", wordID, documentID, documentWord.TF, offsetList)
 		}
 		bulkInsertSQL = bulkInsertSQL[:len(bulkInsertSQL)-2]
 
-		// fmt.Println(word, bulkInsertSQL)
+		fmt.Println(word, bulkInsertSQL)
 		// 登録処理
 		_, err = db.Exec(bulkInsertSQL)
 		if err != nil {

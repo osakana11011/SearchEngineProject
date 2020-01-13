@@ -5,23 +5,23 @@ import (
 	"search_engine_project/crawler/infrastructure/persistance/datastore"
 )
 
-// InvertedIndex ...
-type InvertedIndex interface {
+// InvertedIndexService ...
+type InvertedIndexService interface {
 	Regist(*entity.InvertedIndex)
 }
 
-type invertedIndex struct {}
+type invertedIndexService struct {}
 
-// NewInvertedIndex ...
-func NewInvertedIndex() InvertedIndex {
-	return &invertedIndex{}
+// NewInvertedIndexService ...
+func NewInvertedIndexService() InvertedIndexService {
+	return &invertedIndexService{}
 }
 
 // Regist ...
-func (x *invertedIndex) Regist(invertedIndex *entity.InvertedIndex) {
+func (x *invertedIndexService) Regist(invertedIndex *entity.InvertedIndex) {
 	wordRepository := datastore.NewWordRepository()
-	invertedIndexRepository := datastore.NewInvertedListRepository()
+	invertedListRepository := datastore.NewInvertedListRepository()
 
-	wordRepository.BulkInsert(invertedIndex.Words)
-	invertedIndexRepository.BulkInsert(invertedIndex.InvertedList)
+	wordRepository.BulkInsert(invertedIndex.WordDictionary)
+	invertedListRepository.BulkInsert(invertedIndex.InvertedList)
 }

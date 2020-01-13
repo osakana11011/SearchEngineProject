@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS words;
+CREATE TABLE words (
+  id int NOT NULL AUTO_INCREMENT,
+  word VARCHAR(255) NOT NULL UNIQUE,
+  created_at DATETIME NOT NULL,
+  updated_at DATETIME NOT NULL,
+  PRIMARY KEY (id)
+);
