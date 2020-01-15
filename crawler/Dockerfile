@@ -21,7 +21,7 @@ RUN yum install -y mecab mecab-ipadic mecab-devel
 # MeCabの為の拡張辞書のインストール (https://github.com/neologd/mecab-ipadic-neologd)
 # 辞書が /usr/lib64/mecab/dic/mecab-ipadic-neologd にインストールされる
 RUN git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git
-RUN mecab-ipadic-neologd/bin/install-mecab-ipadic-neologd -n -y
+RUN /mecab-ipadic-neologd/bin/install-mecab-ipadic-neologd -n -y
 
 # Goからdotenvを使う為のライブラリ
 RUN go get github.com/joho/godotenv
