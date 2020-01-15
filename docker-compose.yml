@@ -20,20 +20,3 @@ services:
     tty: true
     volumes:
       - ./crawler/:/var/www/go/src/search_engine_project/crawler/
-  db:
-    image: mysql:5.7
-    container_name: db
-    build:
-      context: ./mysql/
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: docker
-      MYSQL_PASSWORD: docker
-      TZ: 'Asia/Tokyo'
-      LC_ALL: 'ja_JP.UTF-8'
-    ports:
-      - 3306:3306
-    volumes:
-      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
-      - ./mysql/data/:/var/lib/mysql/
-      - ./mysql/migration/:/var/www/migration/

@@ -1,0 +1,5 @@
+version: '3'
+services:
+  search_engine:
+    environment:
+        GO_ENV: production

@@ -23,6 +23,7 @@ RUN go get -u github.com/oxequa/realize
 
 WORKDIR /var/www/go/src/search_engine_project/search_engine/
 CMD ["/sbin/init"]
+CMD ["realize", "start", "--server"]
 
 EXPOSE 80
 EXPOSE 3306
