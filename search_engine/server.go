@@ -6,7 +6,8 @@ import (
     "log"
     "html/template"
     "net/http"
-    "search_engine_project/search_engine/database"
+
+    "search_engine_project/search_engine/domain/service"
 
     "github.com/joho/godotenv"
     _ "github.com/go-sql-driver/mysql"
@@ -19,14 +20,18 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func searchHandler(w http.ResponseWriter, r *http.Request) {
+    searchService := service.NewSearchService()
+
     q := r.URL.Query().Get("q")
-    pages, err := database.GetPages(q)
+    documents, err := searchService.Search(q)
     if err != nil {
-        log.Println(err)
+        // エラー出力
+        fmt.Println(err)
     }
 
     tpl := template.Must(template.ParseFiles("templates/search.html.tpl"))
-    data := map[string]interface{}{"q": q, "pages": pages}
+    data := map[string]interface{}{"q": q, "documents": documents}
+    fmt.Println(documents)
     tpl.Execute(w, data)
 }
 

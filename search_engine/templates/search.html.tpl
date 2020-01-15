@@ -12,9 +12,9 @@
       </form>
     </header>
     <main class="search-results">
-      {{ range .pages }}
+      {{ range .documents }}
         <div class="search-result">
-          <a class="search-result-title" href="{{ .Url }}">{{ .Title }}</a>
+          <a class="search-result-title" href="{{ .URL }}">{{ .Title }}</a>
           <p class="search-result-description">
             説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文説明文
           </p>
