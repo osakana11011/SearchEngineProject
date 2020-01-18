@@ -1,8 +1,8 @@
 package datastore
 
 import (
-	"search_engine_project/crawler/domain/model/entity"
-	"search_engine_project/crawler/domain/repository"
+	"search_engine_project/crawler/src/domain/model/entity"
+	"search_engine_project/crawler/src/domain/repository"
 )
 
 // DocumentRepository はdocumentsテーブルに関するDB操作を提供する。

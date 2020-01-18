@@ -4,8 +4,8 @@ import (
 	"time"
 	"regexp"
 
-	"search_engine_project/crawler/domain/model/entity"
-	"search_engine_project/crawler/infrastructure/persistance/datastore"
+	"search_engine_project/crawler/src/domain/model/entity"
+	"search_engine_project/crawler/src/infrastructure/persistance/datastore"
 )
 
 // DocumentService は文書に関する様々な処理を呼び出す為の窓口。

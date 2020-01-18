@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"search_engine_project/crawler/util"
+	"search_engine_project/crawler/src/util"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -13,8 +13,8 @@ import (
 type Document struct {
 	Title        string                    // タイトル
 	URL          string                    // URL
-	Words        []string                  // 文書内に現れる単語リスト(重複無し)
-	InvertedList map[string]*DocumentWord  // 文書に対する転置リスト
+	Tokens        []string                  // 文書内に現れる単語リスト(重複無し)
+	InvertedList map[string]*DocumentToken // 文書に対する転置リスト
 	Links        []string                  // 文書内に存在するリンク
 }
 
@@ -27,8 +27,10 @@ func GetDocumentByCrawl(url string) (Document, error) {
 	}
 
 	// 本文を抜き出して、名詞単語列を取得する。
-	bodyText := util.FormatString(doc.Find("body").Text())
-	words, err := util.ExtractNounWords(bodyText)
+	bodyText := doc.Find("body").Text()
+	bodyText = util.RemoveEmoji(bodyText)
+	bodyText = util.Normalize(bodyText)
+	tokens, err := util.ExtractNounTokens(bodyText)
 	if err != nil {
 		return Document{}, err
 	}
@@ -37,22 +39,22 @@ func GetDocumentByCrawl(url string) (Document, error) {
 	d := Document{}
 	d.Title = doc.Find("title").Text()
 	d.URL = url
-	d.Words = util.UniqArray(words)
-	d.InvertedList = getInvertedList(words)
+	d.Tokens = util.UniqArray(tokens)
+	d.InvertedList = getInvertedList(tokens)
 	d.Links = extractLinks(doc)
 
 	return d, nil
 }
 
 // getInvertedList は単語のリストから転置リストを構築する。
-func getInvertedList(words []string) map[string]*DocumentWord {
-	invertedList := map[string]*DocumentWord{}
+func getInvertedList(tokens []string) map[string]*DocumentToken {
+	invertedList := map[string]*DocumentToken{}
 
-	for offset, word := range words {
-		if _, isExist := invertedList[word]; !isExist {
-			invertedList[word] = &DocumentWord{Word: word, DocumentWordCounts: len(words)}
+	for offset, token := range tokens {
+		if _, isExist := invertedList[token]; !isExist {
+			invertedList[token] = &DocumentToken{Token: token, DocumentTokenCounts: len(tokens)}
 		}
-		dw := invertedList[word]
+		dw := invertedList[token]
 		dw.addOffset(offset)
 	}
 
@@ -84,18 +86,18 @@ func extractLinks(doc *goquery.Document) []string {
 
 
 
-// DocumentWord は文書中に出現する単語情報を管理するエンティティ。
-type DocumentWord struct {
-	Word               string    // 単語文字列。
-	DocumentWordCounts int       // 文書中に出現する単語の総数
+// DocumentToken は文書中に出現する単語情報を管理するエンティティ。
+type DocumentToken struct {
+	Token              string    // 単語文字列。
+	DocumentTokenCounts int       // 文書中に出現する単語の総数
 	OffsetList         []string  // 文書中に出現する単語のオフセットリスト。(何番目に出現するか。)
 	OffsetCounts       int       // 単語の出現数。
 	TF                 float64   // 文書に対する単語のTF値。文書における単語の重要度。(= 単語の出現数/文書中の総単語数)
 }
 
 // addOffset は文書中に出現する単語のオフセットを追加する。
-func (dw *DocumentWord) addOffset(offset int) {
+func (dw *DocumentToken) addOffset(offset int) {
 	dw.OffsetList = append(dw.OffsetList, strconv.Itoa(offset))
 	dw.OffsetCounts++
-	dw.TF = (float64)(dw.OffsetCounts) / (float64)(dw.DocumentWordCounts)
+	dw.TF = (float64)(dw.OffsetCounts) / (float64)(dw.DocumentTokenCounts)
 }

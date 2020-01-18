@@ -1,8 +1,8 @@
 package service
 
 import (
-	"search_engine_project/crawler/domain/model/entity"
-	"search_engine_project/crawler/infrastructure/persistance/datastore"
+	"search_engine_project/crawler/src/domain/model/entity"
+	"search_engine_project/crawler/src/infrastructure/persistance/datastore"
 )
 
 // InvertedIndexService ...
@@ -19,9 +19,9 @@ func NewInvertedIndexService() InvertedIndexService {
 
 // Regist ...
 func (x *invertedIndexService) Regist(invertedIndex *entity.InvertedIndex) {
-	wordRepository := datastore.NewWordRepository()
+	tokenRepository := datastore.NewTokenRepository()
 	invertedListRepository := datastore.NewInvertedListRepository()
 
-	wordRepository.BulkInsert(invertedIndex.WordDictionary)
+	tokenRepository.BulkInsert(invertedIndex.TokenDictionary)
 	invertedListRepository.BulkInsert(invertedIndex.InvertedList)
 }

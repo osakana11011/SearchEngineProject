@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"search_engine_project/crawler/domain/repository"
-	"search_engine_project/crawler/domain/model/entity"
+	"search_engine_project/crawler/src/domain/repository"
+	"search_engine_project/crawler/src/domain/model/entity"
 )
 
 // InvertedListRepository ...
@@ -25,18 +25,18 @@ func (r *InvertedListRepository) BulkInsert(invertedList entity.InvertedList) er
 	}
 	defer db.Close()
 
-	wordRepository := NewWordRepository()
+	tokenRepository := NewTokenRepository()
 
-	for word, documentWords := range invertedList {
-		wordID, err := wordRepository.GetID(word)
+	for token, documentTokens := range invertedList {
+		tokenID, err := tokenRepository.GetID(token)
 		if err != nil {
 			continue
 		}
-		bulkInsertSQL := "INSERT IGNORE INTO inverted_list (word_id, document_id, tf, offset_list, created_at, updated_at) VALUES "
+		bulkInsertSQL := "INSERT IGNORE INTO inverted_list (token_id, document_id, tf, offset_list, created_at, updated_at) VALUES "
 
-		for documentID, documentWord := range documentWords {
-			offsetList := strings.Join(documentWord.OffsetList, ",")
-			bulkInsertSQL += fmt.Sprintf("('%d', '%d', '%f', '%s', NOW(), NOW()), ", wordID, documentID, documentWord.TF, offsetList)
+		for documentID, documentToken := range documentTokens {
+			offsetList := strings.Join(documentToken.OffsetList, ",")
+			bulkInsertSQL += fmt.Sprintf("('%d', '%d', '%f', '%s', NOW(), NOW()), ", tokenID, documentID, documentToken.TF, offsetList)
 		}
 		bulkInsertSQL = bulkInsertSQL[:len(bulkInsertSQL)-2]
 

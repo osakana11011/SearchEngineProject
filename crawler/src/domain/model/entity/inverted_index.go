@@ -9,12 +9,12 @@ import (
 // DBとのやり取りの回数が減るため高速化に繋がる。
 type InvertedIndex struct {
 	DocumentCounts int           // ミニ転置インデックスを構築している文書数。
-	WordDictionary []string      // 転置インデックス用の単語辞書。
+	TokenDictionary []string      // 転置インデックス用の単語辞書。
 	InvertedList   InvertedList  // 転置リスト。
 }
 
 // InvertedList ...
-type InvertedList map[string]map[int64]DocumentWord
+type InvertedList map[string]map[int64]DocumentToken
 
 // invertedIndex はシングルトンパターンにしたいので、init関数でプログラム起動時に1つだけ生成を行う
 var invertedIndex *InvertedIndex
@@ -24,7 +24,7 @@ func init() {
 
 // InitInvertedIndex ...
 func InitInvertedIndex() {
-	invertedIndex = &InvertedIndex{0, []string{}, map[string]map[int64]DocumentWord{}}
+	invertedIndex = &InvertedIndex{0, []string{}, map[string]map[int64]DocumentToken{}}
 }
 
 // GetInvertedIndex はプログラム内で1つしか存在しない転置インデックスを返す
@@ -39,13 +39,13 @@ func (x *InvertedIndex) AddDocument(documentID int64, document Document) error {
 	}
 
 	// ミニ転置インデックスに単語を登録
-	for _, word := range document.Words {
-		if !containsWord(x.WordDictionary, word) {
-			x.WordDictionary = append(x.WordDictionary, word)
-			x.InvertedList[word] = map[int64]DocumentWord{}
+	for _, token := range document.Tokens {
+		if !containsToken(x.TokenDictionary, token) {
+			x.TokenDictionary = append(x.TokenDictionary, token)
+			x.InvertedList[token] = map[int64]DocumentToken{}
 		}
 
-		x.InvertedList[word][documentID] = *document.InvertedList[word]
+		x.InvertedList[token][documentID] = *document.InvertedList[token]
 	}
 
 	// 文書数をインクリメント
@@ -54,9 +54,9 @@ func (x *InvertedIndex) AddDocument(documentID int64, document Document) error {
 	return nil
 }
 
-func containsWord(words []string, word string) bool {
-	for _, w := range words {
-		if w == word {
+func containsToken(tokens []string, token string) bool {
+	for _, w := range tokens {
+		if w == token {
 			return true
 		}
 	}

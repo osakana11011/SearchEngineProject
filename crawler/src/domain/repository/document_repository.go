@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"search_engine_project/crawler/domain/model/entity"
+	"search_engine_project/crawler/src/domain/model/entity"
 )
 
 // DocumentRepository ...
