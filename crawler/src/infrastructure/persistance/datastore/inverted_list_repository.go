@@ -49,6 +49,7 @@ func (r *InvertedListRepository) BulkInsert(invertedList entity.InvertedList) er
             offsetList := strings.Join(documentToken.OffsetList, ",")
             bulkInsertSQL += fmt.Sprintf("('%d', '%d', '%f', '%s', NOW(), NOW()), ", tokenLookUpTable[token], documentID, documentToken.TF, offsetList)
         }
+        buffN++
 
         // バッファ値が上限を超えたら登録処理を行う
         if buffN >= maxBuffer {
@@ -59,8 +60,6 @@ func (r *InvertedListRepository) BulkInsert(invertedList entity.InvertedList) er
             bulkInsertSQL = "INSERT IGNORE INTO inverted_list (token_id, document_id, tf, offset_list, created_at, updated_at) VALUES "
             buffN = 0
         }
-
-        buffN++
     }
 
     if buffN != 0 {

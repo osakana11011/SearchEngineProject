@@ -31,7 +31,7 @@ func (r *TokenRepository) BulkInsert(tokens []string) error {
     defer db.Close()
 
     // バルクインサートする回数
-    bulkNum := (int)(len(tokens) / 100.0) + 1
+    bulkNum := (int)(math.Ceil(float64(len(tokens)) / 100.0))
     for i := 0; i < bulkNum; i++ {
         // バルクインサート用のSQLを構築
         bulkInsertSQL := "INSERT IGNORE INTO tokens (token, created_at, updated_at) VALUES "
