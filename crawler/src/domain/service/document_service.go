@@ -10,9 +10,9 @@ import (
 )
 
 const (
-    sleepTime     = 500 * time.Millisecond      // クローリングする間隔
-    documentBuffN = 30                          // 転置インデックスにバッファする文書数
-    acceptDomain  = "https://ja.wikipedia.org"  // クローリングを受け付けるドメイン
+    sleepTime          = 500 * time.Millisecond      // クローリングする間隔
+    documentBuffN      = 30                          // 転置インデックスにバッファする文書数
+    acceptDomain       = "https://ja.wikipedia.org"  // クローリングを受け付けるドメイン
 )
 
 // DocumentService は文書に関する様々な処理を呼び出す為の窓口。
@@ -34,8 +34,11 @@ func (x *documentService) Crawl(url string, depth int) error {
         return nil
     }
 
-    // クロールするドメインに制約を掛ける。
+    // クロールするドメイン/ファイル拡張子に制約を掛ける。
     if !isAcceptDomain(url) {
+        return nil
+    }
+    if !isAcceptExtension(url) {
         return nil
     }
 
@@ -88,6 +91,11 @@ func (x *documentService) Crawl(url string, depth int) error {
 func isAcceptDomain(url string) bool {
     r := regexp.MustCompile(fmt.Sprintf(`^%s/`, acceptDomain))
     return r.MatchString(url)
+}
+
+func isAcceptExtension(url string) bool {
+    r := regexp.MustCompile(`[.svg|.jpg]$`)
+    return !r.MatchString(url)
 }
 
 func isRegistedDocument(url string) bool {
