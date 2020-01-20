@@ -4,7 +4,7 @@ import (
     "testing"
     "strconv"
 
-    "search_engine_project/search_engine/src/util"
+    "search_engine_project/crawler/src/util"
 )
 
 func TestNormalize(t *testing.T) {

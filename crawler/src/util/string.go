@@ -10,6 +10,9 @@ func Normalize(str string) string {
     // 検索文字列の前後空白を削除
     str = strings.Trim(str, " ")
 
+    // シングルクオーテーションを削除
+    str = strings.Replace(str, "'", "", -1)
+
     // 全角文字 => 半角文字
     str = zenkakuToHankaku(str)
 

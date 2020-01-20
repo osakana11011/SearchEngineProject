@@ -1,51 +1,82 @@
 package datastore
 
 import (
-	"fmt"
-	"strings"
+    "fmt"
+    "strings"
 
-	"search_engine_project/crawler/src/domain/repository"
-	"search_engine_project/crawler/src/domain/model/entity"
+    "search_engine_project/crawler/src/domain/repository"
+    "search_engine_project/crawler/src/domain/model/entity"
 )
 
-// InvertedListRepository ...
+const (
+    maxBuffer = 100  // maxBufferトークン分のデータをバルクインサートする
+)
+
+// InvertedListRepository は転置リストテーブルを操作するハンドラ
 type InvertedListRepository struct {}
 
-// NewInvertedListRepository ...
+// NewInvertedListRepository は転置リストテーブルを操作するハンドラを生成する
 func NewInvertedListRepository() repository.InvertedListRepository {
-	return &InvertedListRepository{}
+    return &InvertedListRepository{}
 }
 
-// BulkInsert ...
+// BulkInsert は転置リストをバルクインサートする
 func (r *InvertedListRepository) BulkInsert(invertedList entity.InvertedList) error {
-	// DB接続
-	db, err := connectDB()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
+    // 転置リストが空の時は何も返さず終了
+    if len(invertedList) == 0 {
+        return nil
+    }
 
-	tokenRepository := NewTokenRepository()
+    // DB接続
+    db, err := connectDB()
+    if err != nil {
+        return err
+    }
+    defer db.Close()
 
-	for token, documentTokens := range invertedList {
-		tokenID, err := tokenRepository.GetID(token)
-		if err != nil {
-			continue
-		}
-		bulkInsertSQL := "INSERT IGNORE INTO inverted_list (token_id, document_id, tf, offset_list, created_at, updated_at) VALUES "
+    // トークンのIDリストを一括取得
+    tokenRepository := NewTokenRepository()
+    tokenLookUpTable, err := tokenRepository.GetIDs(keys(invertedList))
+    if err != nil {
+        return err
+    }
 
-		for documentID, documentToken := range documentTokens {
-			offsetList := strings.Join(documentToken.OffsetList, ",")
-			bulkInsertSQL += fmt.Sprintf("('%d', '%d', '%f', '%s', NOW(), NOW()), ", tokenID, documentID, documentToken.TF, offsetList)
-		}
-		bulkInsertSQL = bulkInsertSQL[:len(bulkInsertSQL)-2]
+    // 100トークン毎にバルクインサート処理を行う
+    bulkInsertSQL := "INSERT IGNORE INTO inverted_list (token_id, document_id, tf, offset_list, created_at, updated_at) VALUES "
+    buffN := 0
+    for token, documentTokens := range invertedList {
+        for documentID, documentToken := range documentTokens {
+            offsetList := strings.Join(documentToken.OffsetList, ",")
+            bulkInsertSQL += fmt.Sprintf("('%d', '%d', '%f', '%s', NOW(), NOW()), ", tokenLookUpTable[token], documentID, documentToken.TF, offsetList)
+        }
 
-		// 登録処理
-		_, err = db.Exec(bulkInsertSQL)
-		if err != nil {
-			return err
-		}
-	}
+        // バッファ値が上限を超えたら登録処理を行う
+        if buffN >= maxBuffer {
+            bulkInsertSQL = bulkInsertSQL[:len(bulkInsertSQL)-2]
+            if _, err = db.Exec(bulkInsertSQL); err != nil {
+                return err
+            }
+            bulkInsertSQL = "INSERT IGNORE INTO inverted_list (token_id, document_id, tf, offset_list, created_at, updated_at) VALUES "
+            buffN = 0
+        }
 
-	return nil
+        buffN++
+    }
+
+    if buffN != 0 {
+        bulkInsertSQL = bulkInsertSQL[:len(bulkInsertSQL)-2]
+        if _, err := db.Exec(bulkInsertSQL); err != nil {
+            return err
+        }
+    }
+
+    return nil
+}
+
+func keys(invertedList entity.InvertedList) []string {
+    keys := []string{}
+    for key := range invertedList {
+        keys = append(keys, key)
+    }
+    return keys
 }

@@ -11,16 +11,29 @@ import (
     _ "github.com/go-sql-driver/mysql"
 )
 
-func main() {
+const (
+    initDepth = 15
+)
+
+func init() {
+    // ログ設定
+    log.SetFlags(log.LstdFlags | log.Lmicroseconds | log.Lshortfile)
+    logfile, _ := os.OpenFile("/var/www/log.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+    log.SetOutput(logfile)
+
     // dotenvファイルを環境変数にロード
     err := godotenv.Load(fmt.Sprintf(".envfiles/%s.env", os.Getenv("GO_ENV")))
     if err != nil {
-        log.Fatal(fmt.Sprintf("failed load .envfiles/%s.env", os.Getenv("GO_ENV")))
+        log.Fatal(fmt.Sprintf("[Fatal] Failed load .envfiles/%s.env", os.Getenv("GO_ENV")))
     }
+}
 
+func main() {
     documentService := service.NewDocumentService()
-    err = documentService.Crawl("https://ja.wikipedia.org/wiki/Google", 10)
+
+    // クローリング開始
+    err := documentService.Crawl("https://ja.wikipedia.org/wiki/Google", initDepth)
     if err != nil {
-        fmt.Println(err)
+        log.Fatal(err)
     }
 }

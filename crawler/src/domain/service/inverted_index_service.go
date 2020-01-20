@@ -1,27 +1,34 @@
 package service
 
 import (
-	"search_engine_project/crawler/src/domain/model/entity"
-	"search_engine_project/crawler/src/infrastructure/persistance/datastore"
+    "search_engine_project/crawler/src/domain/model/entity"
+    "search_engine_project/crawler/src/infrastructure/persistance/datastore"
 )
 
-// InvertedIndexService ...
+// InvertedIndexService は転置インデックスに関するサービスを提供する
 type InvertedIndexService interface {
-	Regist(*entity.InvertedIndex)
+    Regist(*entity.InvertedIndex) error
 }
 
 type invertedIndexService struct {}
 
-// NewInvertedIndexService ...
+// NewInvertedIndexService 転置インデックスサービスを利用する為の実体を返す
 func NewInvertedIndexService() InvertedIndexService {
-	return &invertedIndexService{}
+    return &invertedIndexService{}
 }
 
-// Regist ...
-func (x *invertedIndexService) Regist(invertedIndex *entity.InvertedIndex) {
-	tokenRepository := datastore.NewTokenRepository()
-	invertedListRepository := datastore.NewInvertedListRepository()
+// Regist トークン+転置リストをDBに登録する
+func (x *invertedIndexService) Regist(invertedIndex *entity.InvertedIndex) error {
+    tokenRepository := datastore.NewTokenRepository()
+    invertedListRepository := datastore.NewInvertedListRepository()
 
-	tokenRepository.BulkInsert(invertedIndex.TokenDictionary)
-	invertedListRepository.BulkInsert(invertedIndex.InvertedList)
+    // トークンと転置リストをバルクインサート
+    if err := tokenRepository.BulkInsert(invertedIndex.TokenDictionary); err != nil {
+        return err
+    }
+    if err := invertedListRepository.BulkInsert(invertedIndex.InvertedList); err != nil {
+        return err
+    }
+
+    return nil
 }

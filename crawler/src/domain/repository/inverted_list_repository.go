@@ -1,10 +1,10 @@
 package repository
 
 import (
-	"search_engine_project/crawler/src/domain/model/entity"
+    "search_engine_project/crawler/src/domain/model/entity"
 )
 
-// InvertedListRepository ...
+// InvertedListRepository は転置リストのDBに関するインターフェース
 type InvertedListRepository interface {
-	BulkInsert(invertedList entity.InvertedList) error
+    BulkInsert(invertedList entity.InvertedList) error
 }
