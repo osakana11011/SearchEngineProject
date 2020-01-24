@@ -10,8 +10,8 @@ import (
 )
 
 const (
-    sleepTime          = 500 * time.Millisecond      // クローリングする間隔
-    documentBuffN      = 30                          // 転置インデックスにバッファする文書数
+    sleepTime          = 1 * time.Second             // クローリングする間隔
+    documentBuffN      = 1                           // 転置インデックスにバッファする文書数
     acceptDomain       = "https://ja.wikipedia.org"  // クローリングを受け付けるドメイン
 )
 
