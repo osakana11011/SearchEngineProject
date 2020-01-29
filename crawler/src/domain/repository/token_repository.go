@@ -1,9 +1,12 @@
 package repository
 
-// TokenRepository はトークンのDB操作に関するインターフェース
+import (
+    "search_engine_project/crawler/src/domain/model/newentity"
+)
+
+// TokenRepository はトークンに関するDB操作を抽象化するインターフェース
 type TokenRepository interface {
-    BulkInsert(tokens []string) error
-    GetIDs(tokens []string) (map[string]int64, error)
-    GetID(token string) (int64, error)
-    GetCounts(token string) (int, error)
+    Insert(token newentity.Token) error
+    BulkInsert(tokens []newentity.Token) error
+    GetTokensByName(tokenNames []string) ([]newentity.Token, error)
 }

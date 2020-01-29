@@ -25,6 +25,8 @@ RUN /mecab-ipadic-neologd/bin/install-mecab-ipadic-neologd -n -y
 
 # Goからdotenvを使う為のライブラリ
 RUN go get github.com/joho/godotenv
+# ORM
+RUN go get -u github.com/jinzhu/gorm
 # MySQLドライバ
 RUN go get github.com/go-sql-driver/mysql
 # スクレイピングライブラリ
