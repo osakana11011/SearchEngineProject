@@ -1,37 +1,35 @@
 package service
 
 import (
-	"search_engine_project/crawler/src/domain/model/newentity"
+	"search_engine_project/crawler/src/domain/model/entity"
 	"search_engine_project/crawler/src/domain/repository"
-	"search_engine_project/crawler/src/infrastructure/persistance/datastore"
 )
 
 // CrawlWaitingService はクロール待ち情報を管理するサービスです。
 type CrawlWaitingService interface {
-	GetValidTopPriority() (newentity.CrawlWaiting, error)
+	GetValidTopPriority() (entity.CrawlWaiting, error)
 }
 
 // NewCrawlWaitingService はCrawlWaitingServiceを動かす構造体を返す。
-func NewCrawlWaitingService() CrawlWaitingService {
-	crawlWaitingRepository := datastore.NewCrawlWaitingRepository()
-	return &crawlWaitingService{crawlWaitingRepository}
+func NewCrawlWaitingService(crawlWaitingRepo repository.CrawlWaitingRepository) CrawlWaitingService {
+	return &crawlWaitingService{crawlWaitingRepo: crawlWaitingRepo}
 }
 
 type crawlWaitingService struct {
-	crawlWaitingRepository repository.CrawlWaitingRepository
+	crawlWaitingRepo repository.CrawlWaitingRepository
 }
 
 // GetValidTopPriority は有効なクロール待ち情報から最も優先度の高いものを取得して返す。
-func (s *crawlWaitingService) GetValidTopPriority() (newentity.CrawlWaiting, error) {
+func (s *crawlWaitingService) GetValidTopPriority() (entity.CrawlWaiting, error) {
 	for {
 		// 最も優先度の高いクロール待ち情報を取得
-		topPriorityCrawlWaiting, err := s.crawlWaitingRepository.GetTopPriority()
+		topPriorityCrawlWaiting, err := s.crawlWaitingRepo.GetTopPriority()
 		if err != nil {
-			return newentity.CrawlWaiting{}, err
+			return entity.CrawlWaiting{}, err
 		}
 
 		// クロール済みであることを証明する為に、CrawledAtに現在日付を入れて更新
-		s.crawlWaitingRepository.Delete(topPriorityCrawlWaiting)
+		s.crawlWaitingRepo.Delete(topPriorityCrawlWaiting)
 
 		// 取り出した情報が有効であれば、それを返す。
 		if topPriorityCrawlWaiting.IsValid() {

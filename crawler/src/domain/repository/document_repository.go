@@ -1,12 +1,12 @@
 package repository
 
 import (
-    "search_engine_project/crawler/src/domain/model/newentity"
+    "search_engine_project/crawler/src/domain/model/entity"
 )
 
 // DocumentRepository はDocumentに関するDB操作を抽象化するインターフェース
 type DocumentRepository interface {
-    Insert(document newentity.Document) (uint, error)
-    GetByURL(url string) (newentity.Document, error)
-    Update(document newentity.Document) error
+    Insert(document entity.Document) (uint, error)
+    GetByURL(url string) (entity.Document, error)
+    Update(document entity.Document) error
 }

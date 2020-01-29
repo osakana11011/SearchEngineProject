@@ -1,12 +1,12 @@
 package repository
 
 import (
-    "search_engine_project/crawler/src/domain/model/newentity"
+    "search_engine_project/crawler/src/domain/model/entity"
 )
 
 // TokenRepository はトークンに関するDB操作を抽象化するインターフェース
 type TokenRepository interface {
-    Insert(token newentity.Token) error
-    BulkInsert(tokens []newentity.Token) error
-    GetTokensByName(tokenNames []string) ([]newentity.Token, error)
+    Insert(token entity.Token) error
+    BulkInsert(tokens []entity.Token) error
+    GetTokensByName(tokenNames []string) ([]entity.Token, error)
 }

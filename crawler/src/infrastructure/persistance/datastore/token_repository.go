@@ -4,42 +4,31 @@ import (
 	"fmt"
 	"strings"
 	"math"
-	"search_engine_project/crawler/src/domain/model/newentity"
-	"search_engine_project/crawler/src/domain/repository"
+	"search_engine_project/crawler/src/domain/model/entity"
+    "search_engine_project/crawler/src/domain/repository"
+    "github.com/jinzhu/gorm"
 )
 
 // NewTokenRepository はトークンに関するDB操作を提供する構造体を生成して返す。
-func NewTokenRepository() repository.TokenRepository {
-	return &tokenRepository{}
+func NewTokenRepository(db *gorm.DB) repository.TokenRepository {
+	return &tokenRepository{db: db}
 }
 
-type tokenRepository struct {}
+type tokenRepository struct {
+    db *gorm.DB
+}
 
-func (r *tokenRepository) Insert(token newentity.Token) error {
-	// DB接続
-	db, err := connectGormDB()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
-
-	db.Create(&token)
+func (r *tokenRepository) Insert(token entity.Token) error {
+	r.db.Create(&token)
 
 	return nil
 }
 
-func (r *tokenRepository) BulkInsert(tokens []newentity.Token) error {
+func (r *tokenRepository) BulkInsert(tokens []entity.Token) error {
 	// 登録する単語が0の時はそのまま返す
     if len(tokens) == 0 {
         return nil
     }
-
-    // DB接続
-    db, err := connectDB()
-    if err != nil {
-        return err
-    }
-    defer db.Close()
 
     // バルクインサートする回数
     bulkNum := (int)(math.Ceil(float64(len(tokens)) / 100.0))
@@ -56,25 +45,15 @@ func (r *tokenRepository) BulkInsert(tokens []newentity.Token) error {
         bulkInsertSQL = bulkInsertSQL[:len(bulkInsertSQL)-2]
 
 		// 登録処理
-        _, err := db.Exec(bulkInsertSQL)
-        if err != nil {
-            return err
-        }
+        r.db.Exec(bulkInsertSQL)
     }
 
     return nil
 }
 
-func (r *tokenRepository) GetTokensByName(tokenNames []string) ([]newentity.Token, error) {
-    // DB接続
-    db, err := connectGormDB()
-    if err != nil {
-        return []newentity.Token{}, err
-    }
-    defer db.Close()
-
-    var tokens []newentity.Token
-    db.Where("name IN (?)", tokenNames).Find(&tokens)
+func (r *tokenRepository) GetTokensByName(tokenNames []string) ([]entity.Token, error) {
+    var tokens []entity.Token
+    r.db.Where("name IN (?)", tokenNames).Find(&tokens)
 
 	return tokens, nil
 }

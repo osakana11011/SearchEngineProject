@@ -1,44 +1,34 @@
 package datastore
 
 import (
-    "search_engine_project/crawler/src/domain/model/newentity"
+    "search_engine_project/crawler/src/domain/model/entity"
     "search_engine_project/crawler/src/domain/repository"
+    "github.com/jinzhu/gorm"
     "github.com/t-tiger/gorm-bulk-insert"
 )
 
-func NewInvertedDataRepository() repository.InvertedDataRepository {
-    return &invertedDataRepository{}
+// NewInvertedDataRepository はrepository.InvertedDataRepositoryを実装した構造体を返す
+func NewInvertedDataRepository(db *gorm.DB) repository.InvertedDataRepository {
+    return &invertedDataRepository{db: db}
 }
 
-type invertedDataRepository struct {}
+type invertedDataRepository struct {
+    db *gorm.DB
+}
 
-func (r *invertedDataRepository) Insert(invertedData newentity.InvertedData) error {
-    // DB接続
-    db, err := connectGormDB()
-    if err != nil {
-        return err
-    }
-    defer db.Close()
-
-    db.Create(&invertedData)
+func (r *invertedDataRepository) Insert(invertedData entity.InvertedData) error {
+    r.db.Create(&invertedData)
 
     return nil
 }
 
-func (r *invertedDataRepository) BulkInsert(invertedData []newentity.InvertedData) error {
-    // DB接続
-    db, err := connectGormDB()
-    if err != nil {
-        return err
-    }
-    defer db.Close()
-
+func (r *invertedDataRepository) BulkInsert(invertedData []entity.InvertedData) error {
     var insertRecords []interface{}
     for _, data := range invertedData {
         insertRecords = append(insertRecords, data)
     }
 
-    if err := gormbulk.BulkInsert(db, insertRecords, 2000); err != nil {
+    if err := gormbulk.BulkInsert(r.db, insertRecords, 2000); err != nil {
 		return err
 	}
 

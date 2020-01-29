@@ -4,7 +4,7 @@ import (
 	"testing"
 	"fmt"
 	"github.com/joho/godotenv"
-	"search_engine_project/crawler/src/domain/model/newentity"
+	"search_engine_project/crawler/src/domain/model/entity"
 	"search_engine_project/crawler/src/infrastructure/persistance/datastore"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -17,7 +17,7 @@ import (
 // 	datastore.MigrateAll()
 // 	crawlWaitingRepository := datastore.NewCrawlWaitingRepository()
 
-// 	crawlWaiting := newentity.CrawlWaiting{URL: "https://hoge1.com", IsPriority: false, IsCrawled: false}
+// 	crawlWaiting := entity.CrawlWaiting{URL: "https://hoge1.com", IsPriority: false, IsCrawled: false}
 // 	if err := crawlWaitingRepository.Insert(crawlWaiting); err != nil {
 // 		t.Fatal(err)
 // 	}
@@ -31,12 +31,12 @@ func TestBulkInsert(t *testing.T) {
 	datastore.MigrateAll()
 	crawlWaitingRepository := datastore.NewCrawlWaitingRepository()
 
-	var hoge []newentity.CrawlWaiting
-	hoge = append(hoge, newentity.CrawlWaiting{URL: "https://hoge1.com", IsPriority: false})
-	hoge = append(hoge, newentity.CrawlWaiting{URL: "https://hoge2.com", IsPriority: false})
-	hoge = append(hoge, newentity.CrawlWaiting{URL: "https://hoge3.com", IsPriority: true})
-	hoge = append(hoge, newentity.CrawlWaiting{URL: "https://hoge4.com", IsPriority: false})
-	hoge = append(hoge, newentity.CrawlWaiting{URL: "https://hoge5.com", IsPriority: true})
+	var hoge []entity.CrawlWaiting
+	hoge = append(hoge, entity.CrawlWaiting{URL: "https://hoge1.com", IsPriority: false})
+	hoge = append(hoge, entity.CrawlWaiting{URL: "https://hoge2.com", IsPriority: false})
+	hoge = append(hoge, entity.CrawlWaiting{URL: "https://hoge3.com", IsPriority: true})
+	hoge = append(hoge, entity.CrawlWaiting{URL: "https://hoge4.com", IsPriority: false})
+	hoge = append(hoge, entity.CrawlWaiting{URL: "https://hoge5.com", IsPriority: true})
 
 	fmt.Println(hoge)
 	crawlWaitingRepository.BulkInsert(hoge)

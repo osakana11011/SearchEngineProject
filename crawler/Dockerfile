@@ -27,6 +27,8 @@ RUN /mecab-ipadic-neologd/bin/install-mecab-ipadic-neologd -n -y
 RUN go get github.com/joho/godotenv
 # ORM
 RUN go get -u github.com/jinzhu/gorm
+# DI Containerツール
+RUN go get go.uber.org/dig
 # MySQLドライバ
 RUN go get github.com/go-sql-driver/mysql
 # スクレイピングライブラリ

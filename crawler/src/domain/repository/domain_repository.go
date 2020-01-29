@@ -1,11 +1,11 @@
 package repository
 
 import (
-	"search_engine_project/crawler/src/domain/model/newentity"
+	"search_engine_project/crawler/src/domain/model/entity"
 )
 
 type DomainRepository interface {
-	Insert(domain newentity.Domain) (uint, error)
-	GetByDomainName(domainName string) (newentity.Domain, error)
-	FirstOrCreate(domainName string) (newentity.Domain, error)
+	Insert(domain entity.Domain) (uint, error)
+	GetByDomainName(domainName string) (entity.Domain, error)
+	FirstOrCreate(domainName string) (entity.Domain, error)
 }

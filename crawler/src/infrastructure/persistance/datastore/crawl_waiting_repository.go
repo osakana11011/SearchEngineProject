@@ -1,87 +1,55 @@
 package datastore
 
 import (
-	"search_engine_project/crawler/src/domain/model/newentity"
+	"search_engine_project/crawler/src/domain/model/entity"
 	"search_engine_project/crawler/src/domain/repository"
+	"github.com/jinzhu/gorm"
 	"github.com/t-tiger/gorm-bulk-insert"
 )
 
-type crawlWaitingRepository struct {}
-
-func NewCrawlWaitingRepository() repository.CrawlWaitingRepository {
-	return &crawlWaitingRepository{}
+// NewCrawlWaitingRepository はrepository.CrawlWaitingRepositoryを実装した構造体を返す。
+func NewCrawlWaitingRepository(db *gorm.DB) repository.CrawlWaitingRepository {
+	return &crawlWaitingRepository{db: db}
 }
 
-func (r *crawlWaitingRepository) Insert(crawlWaiting newentity.CrawlWaiting) error {
-	// DB接続
-	db, err := connectGormDB()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
+type crawlWaitingRepository struct {
+	db *gorm.DB
+}
 
-	db.Create(&crawlWaiting)
+func (r *crawlWaitingRepository) Insert(crawlWaiting entity.CrawlWaiting) error {
+	r.db.Create(&crawlWaiting)
 
 	return nil
 }
 
-func (r *crawlWaitingRepository) BulkInsert(crawlWaitings []newentity.CrawlWaiting) error {
-	// DB接続
-	db, err := connectGormDB()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
-
-	// バルクインサート
+func (r *crawlWaitingRepository) BulkInsert(crawlWaitings []entity.CrawlWaiting) error {
 	var insertRecords []interface{}
 	for _, crawlWaiting := range crawlWaitings {
 		insertRecords = append(insertRecords, crawlWaiting)
 	}
-	if err := gormbulk.BulkInsert(db, insertRecords, 2000); err != nil {
+
+	if err := gormbulk.BulkInsert(r.db, insertRecords, 2000); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (r *crawlWaitingRepository) GetTopPriority() (newentity.CrawlWaiting, error) {
-	// DB接続
-	db, err := connectGormDB()
-	if err != nil {
-		return newentity.CrawlWaiting{}, err
-	}
-	defer db.Close()
-
-	var crawlWaiting newentity.CrawlWaiting
-	db.Order("is_priority DESC").Take(&crawlWaiting)
+func (r *crawlWaitingRepository) GetTopPriority() (entity.CrawlWaiting, error) {
+	var crawlWaiting entity.CrawlWaiting
+	r.db.Order("is_priority DESC").Take(&crawlWaiting)
 
 	return crawlWaiting, nil
 }
 
-func (r *crawlWaitingRepository) Update(crawlWaiting newentity.CrawlWaiting) error {
-	// DB接続
-	db, err := connectGormDB()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
-
-	// 更新処理
-	db.Save(&crawlWaiting)
+func (r *crawlWaitingRepository) Update(crawlWaiting entity.CrawlWaiting) error {
+	r.db.Save(&crawlWaiting)
 
 	return nil
 }
 
-func (r *crawlWaitingRepository) Delete(crawlWaiting newentity.CrawlWaiting) error {
-	// DB接続
-	db, err := connectGormDB()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
-
-	db.Delete(&crawlWaiting)
+func (r *crawlWaitingRepository) Delete(crawlWaiting entity.CrawlWaiting) error {
+	r.db.Delete(&crawlWaiting)
 
 	return nil
 }

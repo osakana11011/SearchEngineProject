@@ -1,4 +1,4 @@
-package newentity
+package entity
 
 import (
     "strings"

@@ -4,19 +4,29 @@ import (
 	"search_engine_project/crawler/src/domain/service"
 )
 
-// ExecCrawlService はクロールサービスを開始する
-func ExecCrawlService() error {
-	crawlWaitingService := service.NewCrawlWaitingService()
-	crawlService := service.NewCrawlService()
+type CrawlUsecase interface {
+	ExecCrawlService() error
+}
 
+func NewCrawlUsecase(crawlService service.CrawlService, crawlWaitingService service.CrawlWaitingService) CrawlUsecase {
+	return &crawlUsecase{crawlWaitingService: crawlWaitingService, crawlService: crawlService}
+}
+
+type crawlUsecase struct {
+	crawlWaitingService service.CrawlWaitingService
+	crawlService service.CrawlService
+}
+
+// ExecCrawlService はクロールサービスを開始する
+func (u *crawlUsecase) ExecCrawlService() error {
 	// クロールする対象を一つ取得する
-	crawlWaiting, err := crawlWaitingService.GetValidTopPriority()
+	crawlWaiting, err := u.crawlWaitingService.GetValidTopPriority()
 	if err != nil {
 		return err
 	}
 
 	// クローリングを行う
-	if err := crawlService.Crawl(crawlWaiting); err != nil {
+	if err := u.crawlService.Crawl(crawlWaiting); err != nil {
 		return err
 	}
 

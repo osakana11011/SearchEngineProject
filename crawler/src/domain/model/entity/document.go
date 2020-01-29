@@ -1,4 +1,4 @@
-package newentity
+package entity
 
 import (
 	"search_engine_project/crawler/src/util"

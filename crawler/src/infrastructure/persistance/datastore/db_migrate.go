@@ -1,7 +1,7 @@
 package datastore
 
 import (
-	"search_engine_project/crawler/src/domain/model/newentity"
+	"search_engine_project/crawler/src/domain/model/entity"
 )
 
 // MigrateAll はGormを利用してマイグレーション処理を実行する
@@ -14,11 +14,11 @@ func MigrateAll() error {
 	defer db.Close()
 
 	// マイグレーション処理
-	db.AutoMigrate(&newentity.Document{})
-	db.AutoMigrate(&newentity.Domain{})
-	db.AutoMigrate(&newentity.Token{})
-	db.AutoMigrate(&newentity.CrawlWaiting{})
-	db.AutoMigrate(&newentity.InvertedData{})
+	db.AutoMigrate(&entity.Document{})
+	db.AutoMigrate(&entity.Domain{})
+	db.AutoMigrate(&entity.Token{})
+	db.AutoMigrate(&entity.CrawlWaiting{})
+	db.AutoMigrate(&entity.InvertedData{})
 
 	return nil
 }
