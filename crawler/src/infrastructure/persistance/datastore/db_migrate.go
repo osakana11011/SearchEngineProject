@@ -7,7 +7,7 @@ import (
 // MigrateAll はGormを利用してマイグレーション処理を実行する
 func MigrateAll() error {
 	// 接続処理
-	db, err := connectGormDB()
+	db, err := NewGormDBConnection()
 	if err != nil {
 		return err
 	}

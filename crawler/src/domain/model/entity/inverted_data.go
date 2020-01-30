@@ -47,7 +47,6 @@ func getToken2IdTable(tokens []Token) map[string]uint {
     return token2ID
 }
 
-// トークンが出現する回数を集計する。
 func generateTokenCounts(tokens []string) map[string]int {
     tokenCounts := make(map[string]int)
 

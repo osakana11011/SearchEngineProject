@@ -21,7 +21,6 @@ type documentRepository struct {
 // 登録に成功した場合、その文書IDも返す。
 func (r *documentRepository) Insert(document entity.Document) (uint, error) {
     document.Domain, _ = r.domainRepo.FirstOrCreate(document.Domain.Name)
-
     r.db.Create(&document)
 
     return document.ID, nil
@@ -33,10 +32,4 @@ func (r *documentRepository) GetByURL(url string) (entity.Document, error) {
     r.db.Where("url = ?", url).Take(&document)
 
     return document, nil
-}
-
-func (r *documentRepository) Update(document entity.Document) error {
-    r.db.Save(&document)
-
-    return nil
 }

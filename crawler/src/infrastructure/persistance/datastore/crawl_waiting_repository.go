@@ -42,12 +42,6 @@ func (r *crawlWaitingRepository) GetTopPriority() (entity.CrawlWaiting, error) {
 	return crawlWaiting, nil
 }
 
-func (r *crawlWaitingRepository) Update(crawlWaiting entity.CrawlWaiting) error {
-	r.db.Save(&crawlWaiting)
-
-	return nil
-}
-
 func (r *crawlWaitingRepository) Delete(crawlWaiting entity.CrawlWaiting) error {
 	r.db.Delete(&crawlWaiting)
 

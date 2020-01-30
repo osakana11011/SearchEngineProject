@@ -11,7 +11,7 @@ type Domain struct {
 	Name string `gorm:"type:varchar(255);unique_index;not null"`
 }
 
-// GetDomainByURL はURL文字列からドメイン名を取り出す
+// GetDomainByURL はURL文字列からドメイン名を取り出す(httpsのみ)
 func GetDomainByURL(url string) Domain {
 	re := regexp.MustCompile(`https://(\S+?)/`)
 	result := re.FindAllStringSubmatch(url, -1)

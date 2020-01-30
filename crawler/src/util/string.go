@@ -5,6 +5,7 @@ import (
     "unicode"
 )
 
+// CutStringData はstrをmaxLenの長さで丸める
 func CutStringData(str string, maxLen int, cutString string) string {
     if len(strings.Split(str, "")) < maxLen {
         maxLen = len(strings.Split(str, ""))
@@ -19,9 +20,8 @@ func Normalize(str string) string {
     // 検索文字列の前後空白を削除
     str = strings.Trim(str, " ")
 
-    // 改行コードの削除
+    // 改行コード、タブコードの削除
     str = strings.Replace(str, "\n", "", -1)
-
     str = strings.Replace(str, "\t", "", -1)
 
     // 2つ以上の空白は1つ分の空白に置き換える

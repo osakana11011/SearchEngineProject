@@ -11,6 +11,7 @@ type CrawlWaiting struct {
 	IsPriority bool       `gorm:"type:boolean;default:0;index"`
 }
 
+// IsValid はセットされているクロールするかどうが判定する
 func (d *CrawlWaiting) IsValid() bool {
 	return true
 }
