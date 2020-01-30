@@ -1,8 +1,0 @@
-DROP TABLE IF EXISTS tokens;
-CREATE TABLE tokens (
-  id int NOT NULL AUTO_INCREMENT,
-  token VARCHAR(255) NOT NULL UNIQUE,
-  created_at DATETIME NOT NULL,
-  updated_at DATETIME NOT NULL,
-  PRIMARY KEY (id)
-);
