@@ -1,6 +1,7 @@
 package service
 
 import (
+    "time"
     "search_engine_project/crawler/src/domain/model/entity"
     "search_engine_project/crawler/src/domain/repository"
 )
@@ -11,29 +12,44 @@ type CrawlWaitingService interface {
 }
 
 // NewCrawlWaitingService はCrawlWaitingServiceを動かす構造体を返す。
-func NewCrawlWaitingService(crawlWaitingRepo repository.CrawlWaitingRepository) CrawlWaitingService {
-    return &crawlWaitingService{crawlWaitingRepo: crawlWaitingRepo}
+func NewCrawlWaitingService(
+    crawlWaitingRepo repository.CrawlWaitingRepository,
+    documentRepo repository.DocumentRepository) CrawlWaitingService {
+    return &crawlWaitingService{crawlWaitingRepo: crawlWaitingRepo, documentRepo: documentRepo}
 }
 
 type crawlWaitingService struct {
     crawlWaitingRepo repository.CrawlWaitingRepository
+    documentRepo repository.DocumentRepository
 }
 
 // GetValidTopPriority は有効なクロール待ち情報から最も優先度の高いものを取得して返す。
 func (s *crawlWaitingService) GetValidTopPriority() (entity.CrawlWaiting, error) {
     for {
         // 最も優先度の高いクロール待ち情報を取得
-        topPriorityCrawlWaiting, err := s.crawlWaitingRepo.GetTopPriority()
+        topPriorityData, err := s.crawlWaitingRepo.GetTopPriority()
         if err != nil {
             return entity.CrawlWaiting{}, err
         }
+        // クロール済みであることを示す為にDeletedAtに日付情報を入れる
+        s.crawlWaitingRepo.Delete(topPriorityData)
 
-        // クロール済みであることを証明する為に、CrawledAtに現在日付を入れて更新
-        s.crawlWaitingRepo.Delete(topPriorityCrawlWaiting)
-
-        // 取り出した情報が有効であれば、それを返す。
-        if topPriorityCrawlWaiting.IsValid() {
-            return topPriorityCrawlWaiting, nil
+        // クロール待ちテーブルにデータが存在しない時、3秒待ってから再度クロール待ちデータを探す
+        if topPriorityData.ID == 0 {
+            time.Sleep(3 * time.Second)
+            continue
         }
+
+        // クロール待ちデータのURLの有効性を検証する
+        if !topPriorityData.IsValid() {
+            continue
+        }
+
+        // クロールしたいデータのURLが既にクロール済みかどうか検証する
+        if d, _ := s.documentRepo.GetByURL(topPriorityData.URL); d.ID != 0 {
+            continue
+        }
+
+        return topPriorityData, nil
     }
 }
