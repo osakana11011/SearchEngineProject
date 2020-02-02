@@ -30,6 +30,8 @@ RUN go get -u github.com/jinzhu/gorm
 RUN go get github.com/t-tiger/gorm-bulk-insert
 # MySQLドライバ
 RUN go get github.com/go-sql-driver/mysql
+# DI Containerツール
+RUN go get go.uber.org/dig
 # Goサーバのホットリロードができる
 RUN go get -u github.com/oxequa/realize
 # GO言語からMeCabを使う為のライブラリ
