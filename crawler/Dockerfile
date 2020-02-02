@@ -1,1 +1,1 @@
-FROM kaneko11011/crawler:0.0.2
+FROM kaneko11011/crawler:0.0.3

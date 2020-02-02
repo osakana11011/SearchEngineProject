@@ -28,18 +28,17 @@ RUN go get github.com/joho/godotenv
 # ORM
 RUN go get -u github.com/jinzhu/gorm
 RUN go get github.com/t-tiger/gorm-bulk-insert
-# DI Containerツール
-RUN go get go.uber.org/dig
 # MySQLドライバ
 RUN go get github.com/go-sql-driver/mysql
-# スクレイピングライブラリ
-RUN go get github.com/PuerkitoBio/goquery
+# Goサーバのホットリロードができる
+RUN go get -u github.com/oxequa/realize
 # GO言語からMeCabを使う為のライブラリ
 ENV CGO_LDFLAGS "-L/usr/lib64 -lmecab"
 ENV CGO_CFLAGS "-I/usr/include"
 RUN go get github.com/bluele/mecab-golang
 
-WORKDIR /var/www/go/src/search_engine_project/crawler/
+WORKDIR /var/www/go/src/search_engine_project/search_engine/
 CMD ["/sbin/init"]
 
+EXPOSE 80
 EXPOSE 3306
