@@ -1,6 +1,7 @@
 package usecase
 
 import (
+    "fmt"
     "time"
     "search_engine_project/crawler/src/domain/service"
 )
@@ -32,12 +33,14 @@ func (u *crawlUsecase) ExecCrawlService() error {
             return err
         }
 
+        fmt.Println(crawlWaiting)
+
         // クローリングを行う
         if err := u.crawlService.Crawl(crawlWaiting); err != nil {
             return err
         }
 
         // クローリングのやり過ぎ防止の為に一定時間スリープ
-        time.Sleep(time.Second)
+        time.Sleep(2 * time.Second)
     }
 }

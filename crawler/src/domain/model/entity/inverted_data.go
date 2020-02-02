@@ -14,7 +14,7 @@ type InvertedData struct {
     TokenID    uint     `gorm:"type:int;index;not null"`
     Token      Token
     TF         float64  `gorm:"type:float"`
-    Offsets    string   `gorm:"type:varchar(4096)"`
+    Offsets    string   `gorm:"type:text"`
 }
 
 // GetInvertedList は転置リストを返す。

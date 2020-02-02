@@ -37,7 +37,7 @@ func (r *crawlWaitingRepository) BulkInsert(crawlWaitings []entity.CrawlWaiting)
 
 func (r *crawlWaitingRepository) GetTopPriority() (entity.CrawlWaiting, error) {
     var crawlWaiting entity.CrawlWaiting
-    r.db.Order("is_priority DESC").Take(&crawlWaiting)
+    r.db.Where("deleted_at IS NULL").Order("is_priority DESC").Take(&crawlWaiting)
 
     return crawlWaiting, nil
 }

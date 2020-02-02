@@ -1,7 +1,6 @@
 package entity
 
 import (
-    "regexp"
     "search_engine_project/crawler/src/util"
     "github.com/PuerkitoBio/goquery"
     "github.com/jinzhu/gorm"
@@ -10,7 +9,7 @@ import (
 // Document は文書情報1つに対応するデータ構造
 type Document struct {
     gorm.Model
-    Title          string   `gorm:"type:varchar(255)"`
+    Title          string   `gorm:"type:text"`
     URL            string   `gorm:"type:varchar(2083)"`
     Description    string   `gorm:"type:text"`
     DomainID       uint     `gorm:"type:int;index"`
@@ -98,16 +97,11 @@ func getChildLinks(doc *goquery.Document, domain Domain) ([]CrawlWaiting, error)
 
     // aタグを見つけて、href属性を抜き出していく
     var childLinks []CrawlWaiting
-    noDomainRegexp := regexp.MustCompile(`^/.*`)
     anchorSelections := doc.Find("a")
     anchorSelections.Each(func(_ int, anchorSelection *goquery.Selection) {
         url, success := anchorSelection.Attr("href")
-        url = util.NormalizeURL(url)
+        url = util.NormalizeURL(url, domain.Name)
         if success && (url != "") {
-            // ドメインが無い場合はドメインを補完する
-            if noDomainRegexp.MatchString(url) {
-                url = "https://" + domain.Name + url
-            }
             link := CrawlWaiting{URL: url, IsPriority: false}
             childLinks = append(childLinks, link)
         }
