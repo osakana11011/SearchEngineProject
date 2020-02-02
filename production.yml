@@ -2,4 +2,7 @@ version: '3'
 services:
   search_engine:
     environment:
-        GO_ENV: production
+      GO_ENV: production
+  crawler:
+    environment:
+      ENV: production
