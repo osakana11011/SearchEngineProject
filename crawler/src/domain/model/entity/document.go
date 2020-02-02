@@ -1,7 +1,6 @@
 package entity
 
 import (
-    "fmt"
     "regexp"
     "search_engine_project/crawler/src/util"
     "github.com/PuerkitoBio/goquery"
@@ -103,8 +102,8 @@ func getChildLinks(doc *goquery.Document, domain Domain) ([]CrawlWaiting, error)
     anchorSelections := doc.Find("a")
     anchorSelections.Each(func(_ int, anchorSelection *goquery.Selection) {
         url, success := anchorSelection.Attr("href")
-        
-        if success {
+        url = util.NormalizeURL(url)
+        if success && (url != "") {
             // ドメインが無い場合はドメインを補完する
             if noDomainRegexp.MatchString(url) {
                 url = "https://" + domain.Name + url
@@ -113,8 +112,6 @@ func getChildLinks(doc *goquery.Document, domain Domain) ([]CrawlWaiting, error)
             childLinks = append(childLinks, link)
         }
     })
-
-    fmt.Println(childLinks)
 
     return childLinks, nil
 }

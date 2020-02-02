@@ -1,7 +1,6 @@
 package datastore
 
 import (
-    "fmt"
     "search_engine_project/crawler/src/domain/model/entity"
     "search_engine_project/crawler/src/domain/repository"
     "github.com/jinzhu/gorm"
@@ -24,7 +23,6 @@ func (r *crawlWaitingRepository) Insert(crawlWaiting entity.CrawlWaiting) error 
 }
 
 func (r *crawlWaitingRepository) BulkInsert(crawlWaitings []entity.CrawlWaiting) error {
-    fmt.Println(crawlWaitings)
     var insertRecords []interface{}
     for _, crawlWaiting := range crawlWaitings {
         insertRecords = append(insertRecords, crawlWaiting)
