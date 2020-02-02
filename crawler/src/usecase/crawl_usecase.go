@@ -1,6 +1,7 @@
 package usecase
 
 import (
+    "time"
     "search_engine_project/crawler/src/domain/service"
 )
 
@@ -24,16 +25,19 @@ type crawlUsecase struct {
 
 // ExecCrawlService はクロールサービスを開始する
 func (u *crawlUsecase) ExecCrawlService() error {
-    // クロールする対象を一つ取得する
-    crawlWaiting, err := u.crawlWaitingService.GetValidTopPriority()
-    if err != nil {
-        return err
-    }
+    for {
+        // クロールする対象を一つ取得する
+        crawlWaiting, err := u.crawlWaitingService.GetValidTopPriority()
+        if err != nil {
+            return err
+        }
 
-    // クローリングを行う
-    if err := u.crawlService.Crawl(crawlWaiting); err != nil {
-        return err
-    }
+        // クローリングを行う
+        if err := u.crawlService.Crawl(crawlWaiting); err != nil {
+            return err
+        }
 
-    return nil
+        // クローリングのやり過ぎ防止の為に一定時間スリープ
+        time.Sleep(time.Second)
+    }
 }
