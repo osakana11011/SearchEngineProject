@@ -26,7 +26,7 @@ RUN /mecab-ipadic-neologd/bin/install-mecab-ipadic-neologd -n -y
 # Goからdotenvを使う為のライブラリ
 RUN go get github.com/joho/godotenv
 # ORM
-RUN go get -u github.com/jinzhu/gorm
+RUN go get github.com/jinzhu/gorm
 RUN go get github.com/t-tiger/gorm-bulk-insert
 # DI Containerツール
 RUN go get go.uber.org/dig

@@ -26,14 +26,14 @@ RUN /mecab-ipadic-neologd/bin/install-mecab-ipadic-neologd -n -y
 # Goからdotenvを使う為のライブラリ
 RUN go get github.com/joho/godotenv
 # ORM
-RUN go get -u github.com/jinzhu/gorm
+RUN go get github.com/jinzhu/gorm
 RUN go get github.com/t-tiger/gorm-bulk-insert
 # MySQLドライバ
 RUN go get github.com/go-sql-driver/mysql
 # DI Containerツール
 RUN go get go.uber.org/dig
 # Goサーバのホットリロードができる
-RUN go get -u github.com/oxequa/realize
+RUN go get github.com/oxequa/realize
 # GO言語からMeCabを使う為のライブラリ
 ENV CGO_LDFLAGS "-L/usr/lib64 -lmecab"
 ENV CGO_CFLAGS "-I/usr/include"
