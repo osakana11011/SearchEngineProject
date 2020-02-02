@@ -11,11 +11,15 @@ type CrawlService interface {
 }
 
 // NewCrawlService はクローラーに関するサービスを提供する構造体を返す。
-func NewCrawlService(documentRepo repository.DocumentRepository,
+func NewCrawlService(
+    documentRepo repository.DocumentRepository,
+    crawlWaitingRepo repository.CrawlWaitingRepository,
     tokenRepo repository.TokenRepository,
-    invertedDataRepo repository.InvertedDataRepository) CrawlService {
+    invertedDataRepo repository.InvertedDataRepository,
+    ) CrawlService {
     return &crawlService{
         documentRepo: documentRepo,
+        crawlWaitingRepo: crawlWaitingRepo,
         tokenRepo: tokenRepo,
         invertedDataRepo: invertedDataRepo,
     }
@@ -23,6 +27,7 @@ func NewCrawlService(documentRepo repository.DocumentRepository,
 
 type crawlService struct {
     documentRepo repository.DocumentRepository
+    crawlWaitingRepo repository.CrawlWaitingRepository
     tokenRepo    repository.TokenRepository
     invertedDataRepo repository.InvertedDataRepository
 }
@@ -37,6 +42,11 @@ func (s *crawlService) Crawl(crawlWaiting entity.CrawlWaiting) error {
     // 文書の登録
     documentID, err := s.documentRepo.Insert(document)
     if err != nil {
+        return err
+    }
+
+    // クロール対象の子リンク(次クロールする候補対象)を登録
+    if err := s.crawlWaitingRepo.BulkInsert(document.ChildLinks); err != nil {
         return err
     }
 

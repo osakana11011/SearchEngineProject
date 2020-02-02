@@ -23,6 +23,9 @@ func init () {
     }
 
     // 自動マイグレーション
+    if err := datastore.DropAll(); err != nil {
+        panic(err)
+    }
     if err := datastore.MigrateAll(); err != nil {
         panic(err)
     }

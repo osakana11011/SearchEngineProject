@@ -1,6 +1,8 @@
 package entity
 
 import (
+    "fmt"
+    "regexp"
     "search_engine_project/crawler/src/util"
     "github.com/PuerkitoBio/goquery"
     "github.com/jinzhu/gorm"
@@ -16,6 +18,7 @@ type Document struct {
     Domain         Domain
     UnUniqueTokens []string `gorm:"-"`
     UniqueTokens   []string `gorm:"-"`
+    ChildLinks     []CrawlWaiting `gorm:"-"`
 }
 
 // GetDocumentByCrawl はURL情報を用いてクロールしてDocumentを取得する
@@ -32,6 +35,7 @@ func GetDocumentByCrawl(url string) (Document, error) {
     document.Domain = GetDomainByURL(url)
     document.UnUniqueTokens, _ = getUnUniqueTokens(gqdoc)
     document.UniqueTokens, _ = getUniqueTokens(gqdoc)
+    document.ChildLinks, _ = getChildLinks(gqdoc, document.Domain)
 
     if err != nil {
         return Document{}, err
@@ -86,4 +90,31 @@ func getUniqueTokens(doc *goquery.Document) ([]string, error) {
     }
 
     return uniqueTokens, nil
+}
+
+func getChildLinks(doc *goquery.Document, domain Domain) ([]CrawlWaiting, error) {
+    bodyText := doc.Find("body").Text()
+    bodyText = util.RemoveEmoji(bodyText)
+    bodyText = util.Normalize(bodyText)
+
+    // aタグを見つけて、href属性を抜き出していく
+    var childLinks []CrawlWaiting
+    noDomainRegexp := regexp.MustCompile(`^/.*`)
+    anchorSelections := doc.Find("a")
+    anchorSelections.Each(func(_ int, anchorSelection *goquery.Selection) {
+        url, success := anchorSelection.Attr("href")
+        
+        if success {
+            // ドメインが無い場合はドメインを補完する
+            if noDomainRegexp.MatchString(url) {
+                url = "https://" + domain.Name + url
+            }
+            link := CrawlWaiting{URL: url, IsPriority: false}
+            childLinks = append(childLinks, link)
+        }
+    })
+
+    fmt.Println(childLinks)
+
+    return childLinks, nil
 }
