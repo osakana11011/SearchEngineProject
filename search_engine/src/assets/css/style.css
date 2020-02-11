@@ -1,0 +1,87 @@
+body {
+  font-family: Google Sans,Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
+  background: #eee;
+}
+
+
+/* Header */
+/* ------------------------------ */
+.header {
+  background: #2A8062;
+  width: 100%;
+  padding: 15px 30px;
+}
+
+.header .header-title {
+  color: #A1FFDE;
+  font-size: 1.7rem;
+  text-decoration: none;
+}
+/* ------------------------------ */
+
+/* Contents */
+/* ------------------------------ */
+.wrapper {
+  margin: 200px auto;
+  text-align: center;
+}
+
+.search-box {
+  height: 30px;
+  width: 600px;
+  padding: 2px 16px;
+  font-size: 100%;
+  border: solid 1px;
+  border-color: #a9a9a9;
+  border-radius: 15px;
+  box-shadow: none;
+}
+
+.search-box:hover {
+  box-shadow: 1px 1px 2px gray;
+}
+
+.search-box:focus {
+  box-shadow: 1px 1px 2px gray;
+}
+/* ------------------------------ */
+
+/* Results */
+/* ------------------------------ */
+.search-header {
+  width: 100%;
+  padding: 20px 0 10px 40px;
+  background-color: #d3d3d3;
+  box-sizing: border-box;
+}
+
+.search-results {
+  padding: 40px 0 40px 40px;
+}
+
+.search-result {
+  margin: 50px 0 0 0;
+  width: 700px;
+}
+
+.search-result:first-child {
+  margin: 0;
+}
+
+.search-result-title {
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.search-result-title:hover {
+  text-decoration: underline;
+}
+
+.search-result-description {
+  margin: 5px 0 0 0;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 1px;
+}
