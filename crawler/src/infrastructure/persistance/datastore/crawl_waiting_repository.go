@@ -37,13 +37,19 @@ func (r *crawlWaitingRepository) BulkInsert(crawlWaitings []entity.CrawlWaiting)
 
 func (r *crawlWaitingRepository) GetTopPriority() (entity.CrawlWaiting, error) {
     var crawlWaiting entity.CrawlWaiting
-    r.db.Where("deleted_at IS NULL").Order("is_priority DESC").Take(&crawlWaiting)
+    r.db.Where("deleted_at IS NULL").Order("is_priority DESC").Order("id ASC").Take(&crawlWaiting)
 
     return crawlWaiting, nil
 }
 
 func (r *crawlWaitingRepository) Delete(crawlWaiting entity.CrawlWaiting) error {
     r.db.Delete(&crawlWaiting)
+
+    return nil
+}
+
+func (r *crawlWaitingRepository) HardDelete(crawlWaiting entity.CrawlWaiting) error {
+    r.db.Unscoped().Delete(&crawlWaiting)
 
     return nil
 }

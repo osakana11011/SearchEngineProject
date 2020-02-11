@@ -10,4 +10,5 @@ type CrawlWaitingRepository interface {
     BulkInsert(crawlWaiting []entity.CrawlWaiting) error
     GetTopPriority() (entity.CrawlWaiting, error)
     Delete(crawlWaiting entity.CrawlWaiting) error
+    HardDelete(crawlWaiting entity.CrawlWaiting) error
 }

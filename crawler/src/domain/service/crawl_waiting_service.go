@@ -31,8 +31,8 @@ func (s *crawlWaitingService) GetValidTopPriority() (entity.CrawlWaiting, error)
         if err != nil {
             return entity.CrawlWaiting{}, err
         }
-        // クロール済みであることを示す為にDeletedAtに日付情報を入れる
-        s.crawlWaitingRepo.Delete(topPriorityData)
+        // クロール済みの情報は要らないので、それらをハードデリートする
+        s.crawlWaitingRepo.HardDelete(topPriorityData)
 
         // クロール待ちテーブルにデータが存在しない時、3秒待ってから再度クロール待ちデータを探す
         if topPriorityData.ID == 0 {
