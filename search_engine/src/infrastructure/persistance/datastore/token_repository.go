@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// NewTokenRepository はrepository.TokenRepository実装した構造体を返す
 func NewTokenRepository(db *gorm.DB) repository.TokenRepository {
 	return &tokenRepository{db: db}
 }

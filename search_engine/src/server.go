@@ -17,11 +17,6 @@ import (
     _ "github.com/go-sql-driver/mysql"
 )
 
-type SearchResult struct {
-    Q string
-    Documents []entity.Document
-}
-
 func indexHandler(w http.ResponseWriter, r *http.Request) {
     tpl := template.Must(template.ParseFiles("assets/templates/index.html.tpl"))
     tpl.Execute(w, nil)
@@ -29,16 +24,23 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 func searchHandler(w http.ResponseWriter, r *http.Request) {
     c := dig.New()
-
     c.Provide(datastore.NewGormDBConnection)
     c.Provide(datastore.NewDocumentRepository)
     c.Provide(service.NewSearchService)
     c.Provide(usecase.NewSearchUseCase)
 
+    q := r.URL.Query().Get("q")
+
+    // SearchResult は検索結果をテンプレートに渡す構造体
+    type SearchResult struct {
+        Q string
+        Documents []entity.Document
+    }
+
     // 検索して表示
     c.Invoke(func(searchUsecase usecase.SearchUseCase) {
-        documents, _ := searchUsecase.Search("")
-        searchResult := SearchResult{Q: "hoge", Documents: documents}
+        documents, _ := searchUsecase.Search(q)
+        searchResult := SearchResult{Q: q, Documents: documents}
 
         tpl := template.Must(template.ParseFiles("assets/templates/search.html.tpl"))
         tpl.Execute(w, searchResult)

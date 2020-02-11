@@ -18,7 +18,7 @@ type documentRepository struct {
 
 func (r *documentRepository) GetByTitle(title string) ([]entity.Document, error) {
 	var documents []entity.Document
-	r.db.Limit(10).Select("*").Find(&documents)
+	r.db.Where("title LIKE ?", "%"+title+"%").Limit(10).Select("*").Find(&documents)
 
 	return documents, nil
 }
