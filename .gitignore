@@ -1,6 +1,7 @@
 .DS_Store
 .vscode/
 crawler/src/.envfiles/
+crawler/src/log.txt
 search_engine/src/.envfiles/
 mysql/data/
 mysql/migration/wikipedia_sample_data.sql

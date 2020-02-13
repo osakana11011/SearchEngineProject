@@ -1,6 +1,7 @@
 package usecase
 
 import (
+    "log"
     "fmt"
     "time"
     "search_engine_project/crawler/src/domain/service"
@@ -33,6 +34,7 @@ func (u *crawlUsecase) ExecCrawlService() error {
             return err
         }
 
+        log.Println(crawlWaiting)
         fmt.Println(crawlWaiting)
 
         // クローリングを行う

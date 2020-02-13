@@ -2,6 +2,7 @@ package main
 
 import (
     "os"
+    "log"
     "fmt"
     "search_engine_project/crawler/src/domain/model/entity"
     "search_engine_project/crawler/src/domain/repository"
@@ -21,6 +22,13 @@ func init () {
             panic(err)
         }
     }
+
+    // ログファイルを吐き出す場所を定義
+    logfile, err := os.OpenFile("./log.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+    if err != nil {
+        panic("cannnot open test.log:" + err.Error())
+    }
+    log.SetOutput(logfile)
 
     // 自動マイグレーション
     // if err := datastore.DropAll(); err != nil {
@@ -52,6 +60,9 @@ func main() {
     })
 
     c.Invoke(func(crawlUsecase usecase.CrawlUsecase) {
-        crawlUsecase.ExecCrawlService()
+        err := crawlUsecase.ExecCrawlService()
+        if err != nil {
+            log.Println(err)
+        }
     })
 }
