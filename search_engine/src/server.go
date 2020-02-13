@@ -25,6 +25,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 func searchHandler(w http.ResponseWriter, r *http.Request) {
     c := dig.New()
     c.Provide(datastore.NewGormDBConnection)
+    c.Provide(datastore.NewTokenRepository)
     c.Provide(datastore.NewDocumentRepository)
     c.Provide(service.NewSearchService)
     c.Provide(usecase.NewSearchUseCase)

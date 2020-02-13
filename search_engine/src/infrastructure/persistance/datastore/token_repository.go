@@ -22,3 +22,11 @@ func (r *tokenRepository) GetByTokenName(tokenName string) (entity.Token, error)
 
 	return token, nil
 }
+
+func (r *tokenRepository) GetByTokenNames(tokenNames []string) ([]entity.Token, error) {
+	var tokens []entity.Token
+
+	r.db.Where("name IN (?)", tokenNames).Find(&tokens)
+
+	return tokens, nil
+}
