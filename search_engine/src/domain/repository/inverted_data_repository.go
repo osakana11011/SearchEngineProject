@@ -6,5 +6,5 @@ import (
 
 // InvertedDataRepository は転置データに関するDB操作を提供するインターフェース
 type InvertedDataRepository interface {
-	GetByToken(token entity.Token, page int, n int) int
+	GetByToken(token entity.Token) ([]entity.InvertedData, error)
 }

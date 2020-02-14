@@ -6,5 +6,6 @@ import (
 
 // DocumentRepository は文書に関するDB操作を抽象化するインターフェース
 type DocumentRepository interface {
+	GetByIDs(documentIDs []uint) ([]entity.Document, error)
 	GetByTitle(title string) ([]entity.Document, error)
 }
