@@ -3,9 +3,10 @@
   <head>
     <title>検索</title>
     <link rel="stylesheet" type="text/css" href="/assets/css/reset.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/base.css" />
 
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="meta-descriptionです。" />
     <link rel="canonical" href="https://google.com/" />
     <meta name="robots" content="noindex, nofollow">

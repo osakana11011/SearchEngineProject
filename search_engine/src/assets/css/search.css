@@ -1,0 +1,39 @@
+.search-box {
+  margin: 10px 0 0;
+}
+
+.search-results {
+  width: 95%;
+  margin: 20px 2.5%;
+}
+
+.search-result {
+  margin: 50px 0 0 0;
+}
+
+.search-result:first-child {
+  margin: 0;
+}
+
+.search-result-title {
+  font-size: 1.4rem;
+  line-height: 24px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.search-result-title:hover {
+  text-decoration: underline;
+}
+
+.search-result-description {
+  margin: 5px 0 0 0;
+  font-size: 1.0rem;
+  line-height: 1.4rem;
+}
+
+@media screen and (min-width: 769px) {
+  .search-results {
+    max-width: 700px;
+  }
+}
