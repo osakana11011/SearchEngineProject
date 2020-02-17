@@ -16,6 +16,14 @@ type crawlWaitingRepository struct {
     db *gorm.DB
 }
 
+func (r *crawlWaitingRepository) GetCounts() int {
+    var count int
+    var crawlWaitings []entity.CrawlWaiting
+    r.db.Find(&crawlWaitings).Count(&count)
+
+    return count
+}
+
 func (r *crawlWaitingRepository) Insert(crawlWaiting entity.CrawlWaiting) error {
     r.db.Create(&crawlWaiting)
 

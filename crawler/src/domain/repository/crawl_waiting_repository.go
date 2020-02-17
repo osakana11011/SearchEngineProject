@@ -6,6 +6,7 @@ import (
 
 // CrawlWaitingRepository はクロール待ちデータに関するDB操作を抽象化するインターフェース
 type CrawlWaitingRepository interface {
+    GetCounts() int
     Insert(crawlWaiting entity.CrawlWaiting) error
     BulkInsert(crawlWaiting []entity.CrawlWaiting) error
     GetTopPriority() (entity.CrawlWaiting, error)

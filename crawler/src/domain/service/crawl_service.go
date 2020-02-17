@@ -46,8 +46,12 @@ func (s *crawlService) Crawl(crawlWaiting entity.CrawlWaiting) error {
     }
 
     // クロール対象の子リンク(次クロールする候補対象)を登録
-    if err := s.crawlWaitingRepo.BulkInsert(document.ChildLinks); err != nil {
-        return err
+    // クロール対象のデータは指数関数敵に増えるので、テーブル上に一定の閾値を超えている時はデータを入れないようにする
+    counts := s.crawlWaitingRepo.GetCounts()
+    if counts < 100000 {
+        if err := s.crawlWaitingRepo.BulkInsert(document.ChildLinks); err != nil {
+            return err
+        }
     }
 
     // トークンの登録
