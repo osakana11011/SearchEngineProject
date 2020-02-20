@@ -17,14 +17,8 @@ import (
     _ "github.com/go-sql-driver/mysql"
 )
 
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-    tpl := template.Must(template.ParseFiles("assets/templates/index.html.tpl"))
-    tpl.Execute(w, nil)
-}
-
-func searchHandler(w http.ResponseWriter, r *http.Request) {
-    c := dig.New()
-
+var c = dig.New()
+func init() {
     c.Provide(datastore.NewGormDBConnection)
     c.Provide(datastore.NewTokenRepository)
     c.Provide(datastore.NewDocumentRepository)
@@ -32,7 +26,14 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 
     c.Provide(service.NewSearchService)
     c.Provide(usecase.NewSearchUseCase)
+}
 
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+    tpl := template.Must(template.ParseFiles("assets/templates/index.html.tpl"))
+    tpl.Execute(w, nil)
+}
+
+func searchHandler(w http.ResponseWriter, r *http.Request) {
     q := r.URL.Query().Get("q")
 
     // SearchResult は検索結果をテンプレートに渡す構造体
