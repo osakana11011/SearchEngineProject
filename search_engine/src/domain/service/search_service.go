@@ -39,6 +39,7 @@ func (ss *searchService) Search(q string) ([]entity.Document, error) {
     if err != nil {
         return []entity.Document{}, err
     }
+    fmt.Println(tokens)
 
     var invertedLists [][]entity.InvertedData
     for _, token := range tokens {
@@ -80,11 +81,9 @@ func ranking(invertedLists [][]entity.InvertedData) []uint {
         candidateDocumentIDs = tmpCandidateDocumentIDs
     }
 
-    if len(candidateDocumentIDs) == 0 {
-        return []uint{}
+    if len(candidateDocumentIDs) < 10 {
+        return candidateDocumentIDs
     }
-
-    fmt.Println(candidateDocumentIDs)
 
     return candidateDocumentIDs[:10]
 }
