@@ -22,11 +22,15 @@
       </form>
     </header>
     <main class="search-results">
-      {{ range .Documents }}
-        <div class="search-result">
-          <a class="search-result-title" href="{{ .URL }}">{{ .Title }}</a>
-          <p class="search-result-description">{{ .Description }}</p>
-        </div>
+      {{ if gt .DocumentsN 0 }}
+        {{ range .Documents }}
+          <div class="search-result">
+            <a class="search-result-title" href="{{ .URL }}">{{ .Title }}</a>
+            <p class="search-result-description">{{ .Description }}</p>
+          </div>
+        {{ end }}
+      {{ else }}
+        <p>検索結果が見つかりませんでした。</p>
       {{ end }}
     </main>
   </body>

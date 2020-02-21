@@ -1,7 +1,6 @@
 package service
 
 import (
-    "fmt"
     "search_engine_project/search_engine/src/domain/model/entity"
     "search_engine_project/search_engine/src/domain/model/valueobject"
     "search_engine_project/search_engine/src/domain/repository"
@@ -39,7 +38,6 @@ func (ss *searchService) Search(q string) ([]entity.Document, error) {
     if err != nil {
         return []entity.Document{}, err
     }
-    fmt.Println(tokens)
 
     var invertedLists [][]entity.InvertedData
     for _, token := range tokens {

@@ -39,13 +39,15 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
     // SearchResult は検索結果をテンプレートに渡す構造体
     type SearchResult struct {
         Q string
+        DocumentsN int
         Documents []entity.Document
     }
 
     // 検索して表示
     c.Invoke(func(searchUsecase usecase.SearchUseCase) {
         documents, _ := searchUsecase.Search(q)
-        searchResult := SearchResult{Q: q, Documents: documents}
+        searchResult := SearchResult{Q: q, DocumentsN: len(documents), Documents: documents}
+        fmt.Println(searchResult)
 
         tpl := template.Must(template.ParseFiles("assets/templates/search.html.tpl"))
         tpl.Execute(w, searchResult)
