@@ -22,5 +22,5 @@ services:
     tty: true
     volumes:
       - ./crawler/:/var/www/go/src/search_engine_project/crawler/
-    engironment:
+    environment:
       ENV: production
