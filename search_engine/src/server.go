@@ -54,6 +54,11 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
     })
 }
 
+func managementHandler(w http.ResponseWriter, r *http.Request) {
+    tpl := template.Must(template.ParseFiles("assets/templates/management.html.tpl"))
+    tpl.Execute(w, nil)
+}
+
 func main() {
     // dotenvファイルを環境変数にロード
     err := godotenv.Load(fmt.Sprintf(".envfiles/%s.env", os.Getenv("ENV")))
@@ -64,5 +69,6 @@ func main() {
     http.Handle("/assets/css/", http.StripPrefix("/assets/css/", http.FileServer(http.Dir("assets/css/"))))
     http.HandleFunc("/", indexHandler)
     http.HandleFunc("/search/", searchHandler)
+    http.HandleFunc("/management", managementHandler)
     http.ListenAndServe(":3000", nil)
 }
