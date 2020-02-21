@@ -66,7 +66,7 @@ func main() {
         log.Fatal(fmt.Sprintf("failed load .envfiles/%s.env", os.Getenv("ENV")))
     }
 
-    http.Handle("/assets/css/", http.StripPrefix("/assets/css/", http.FileServer(http.Dir("assets/css/"))))
+    http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets/"))))
     http.HandleFunc("/", indexHandler)
     http.HandleFunc("/search/", searchHandler)
     http.HandleFunc("/management", managementHandler)
