@@ -11,6 +11,8 @@ services:
     tty: true
     volumes:
       - ./search_engine/:/var/www/go/src/search_engine_project/search_engine/
+    environment:
+      ENV: production
   crawler:
     image: crawler:test
     container_name: crawler
@@ -20,3 +22,5 @@ services:
     tty: true
     volumes:
       - ./crawler/:/var/www/go/src/search_engine_project/crawler/
+    engironment:
+      ENV: production

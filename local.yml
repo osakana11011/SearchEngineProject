@@ -2,10 +2,10 @@ version: '3'
 services:
   search_engine:
     environment:
-        ENV: local
+      ENV: local
   crawler:
     environment:
-        ENV: local
+      ENV: local
   db:
     image: mysql:5.7
     container_name: db
