@@ -19,9 +19,6 @@ body {
 }
 
 .header .header-title {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   color: #A1FFDE;
   font-size: 1.7rem;
   text-decoration: none;
@@ -84,6 +81,12 @@ body {
 
   .top-search-box {
     width: 600px;
+  }
+
+  .header .header-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .is-pc {
