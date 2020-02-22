@@ -43,7 +43,6 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
     // 検索して表示
     c.Invoke(func(searchUsecase usecase.SearchUseCase) {
         searchResult, _ := searchUsecase.Search(q, page)
-        fmt.Println(searchResult)
 
         tpl := template.Must(template.ParseFiles("assets/templates/search.html.tpl"))
         tpl.Execute(w, searchResult)
