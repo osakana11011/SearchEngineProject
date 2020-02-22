@@ -55,7 +55,7 @@ body {
 }
 
 .is-pc {
-  display: inline;
+  display: none;
 }
 
 @media screen and (min-width: 769px) {
@@ -73,5 +73,5 @@ body {
 }
 
 .is-pc {
-  display: none;
+  display: block;
 }
