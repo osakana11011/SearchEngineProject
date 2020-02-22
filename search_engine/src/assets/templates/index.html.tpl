@@ -16,14 +16,19 @@
 <body>
   <header class="header">
     <a class="header-title" href="/">
-      Wikipedia検索
+      Wiki検索
     </a>
   </header>
 
-  <div class="wrapper">
-    <form action="/search">
-      <input type="text" name="q" class="search-box" />
-    </form>
-  </div>
+  <main class="main">
+    <div class="wrapper">
+      <form action="/search" method="get">
+        <input type="text" name="q" class="top-search-box" />
+      </form>
+    </div>
+  </main>
+
+  <footer class="footer">
+  </footer>
 </body>
 </html>

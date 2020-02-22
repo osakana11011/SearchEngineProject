@@ -1,3 +1,25 @@
+/* 検索ボックス */
+.search-box {
+  height: 2.0rem;
+  width: 100%;
+  padding: 2px 16px;
+  margin: 0 auto;
+  border: solid 1px;
+  border-color: #a9a9a9;
+  border-radius: 8.5rem;
+  box-shadow: none;
+  font-size: 100%;
+}
+
+.search-box:hover {
+  box-shadow: 1px 1px 2px gray;
+}
+
+.search-box:focus {
+  box-shadow: 1px 1px 2px gray;
+}
+
+/* 検索結果を表示する為のボックス */
 .search-results {
   width: 95%;
   margin: 20px 2.5%;
@@ -28,6 +50,7 @@
   line-height: 1.4rem;
 }
 
+/* ページング用 */
 .paging {
   display: flex;
   justify-content: space-around;
@@ -60,6 +83,11 @@
 }
 
 @media screen and (min-width: 769px) {
+  .search-box {
+    margin-left: 20px;
+    width: 500px;
+  }
+
   .search-results {
     max-width: 700px;
   }

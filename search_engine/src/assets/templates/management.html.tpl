@@ -17,7 +17,7 @@
   <body>
     <header class="header">
       <a class="header-title" href="/">
-        Wikipedia検索
+        Wiki検索
       </a>
     </header>
     <main>

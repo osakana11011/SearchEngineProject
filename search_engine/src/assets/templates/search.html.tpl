@@ -24,7 +24,7 @@
       </form>
     </header>
 
-    <main>
+    <main class="main">
       {{ if gt .DocumentsN 0 }}
       <div class="search-results">
         {{ range .Documents }}
