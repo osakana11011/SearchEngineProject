@@ -1,7 +1,3 @@
-.search-box {
-  margin: 10px 0 0;
-}
-
 .search-results {
   width: 95%;
   margin: 20px 2.5%;
@@ -30,6 +26,37 @@
   margin: 5px 0 0 0;
   font-size: 1.0rem;
   line-height: 1.4rem;
+}
+
+.paging {
+  display: flex;
+  justify-content: space-around;
+  margin: 40px auto;
+}
+
+.paging .paging-numbers {
+  display: flex;
+  justify-content: center;
+}
+
+.paging .paging-numbers .paging-number {
+  margin-left: 10px;
+}
+
+.paging a {
+  font-size: 1.1rem;
+  text-decoration: none;
+  color: #43cc9c;
+}
+
+.paging .paging-number.current a {
+  font-weight: bold;
+  color: #2a8062;
+  text-decoration: underline;
+}
+
+.paging .paging-numbers .paging-number:first {
+  margin-left: 0;
 }
 
 @media screen and (min-width: 769px) {

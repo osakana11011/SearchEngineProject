@@ -1,10 +1,10 @@
 body {
   font-family: Google Sans,Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
-  background: #eee;
 }
 
 /* Header */
 .header {
+  display: flex;
   background: #2A8062;
   width: 100%;
   padding: 15px 30px;
@@ -20,14 +20,13 @@ body {
 
 /* Contents */
 .search-box {
-  display: block;
-  height: 30px;
-  width: 80%;
-  margin: 0 auto;
+  height: 1.7rem;
+  width: 100%;
   padding: 2px 16px;
+  margin-left: 20px;
   border: solid 1px;
   border-color: #a9a9a9;
-  border-radius: 15px;
+  border-radius: 8.5rem;
   box-shadow: none;
   font-size: 100%;
 }
@@ -50,6 +49,14 @@ body {
 }
 /* --------------------------- */
 
+.footer {
+  height: 60px;
+  background-color: #ddd;
+}
+
+.is-pc {
+  display: inline;
+}
 
 @media screen and (min-width: 769px) {
   .header {
@@ -61,6 +68,10 @@ body {
   }
 
   .search-box {
-    max-width: 600px;
+    width: 500px;
   }
+}
+
+.is-pc {
+  display: none;
 }

@@ -26,6 +26,9 @@
       </div>
     </main>
 
+    <footer class="footer">
+    </footer>
+
     <script>
       var ctx = document.getElementById("documents-graph");
       var myLineChart = new Chart(ctx, {

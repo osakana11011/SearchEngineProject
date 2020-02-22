@@ -7,7 +7,7 @@ import (
 
 // SearchUseCase はPresentation層から呼ぶユースケース機能を提供する。
 type SearchUseCase interface {
-    Search(q string) ([]entity.Document, error)
+    Search(q string, page int) (entity.SearchResult, error)
 }
 
 // NewSearchUseCase はSearchUseCaseインターフェースを実装した構造体を返す。
@@ -19,6 +19,6 @@ type searchUseCase struct {
     searchService service.SearchService
 }
 
-func (u *searchUseCase) Search(q string) ([]entity.Document, error) {
-    return u.searchService.Search(q)
+func (u *searchUseCase) Search(q string, page int) (entity.SearchResult, error) {
+    return u.searchService.Search(q, page)
 }

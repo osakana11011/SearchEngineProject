@@ -8,7 +8,7 @@ import (
 
 // SearchService は文書に関する様々な処理を呼び出す為の窓口。
 type SearchService interface {
-    Search(title string) ([]entity.Document, error)
+    Search(q string, page int) (entity.SearchResult, error)
 }
 
 type searchService struct {
@@ -31,12 +31,12 @@ func NewSearchService(
     }
 }
 
-func (ss *searchService) Search(q string) ([]entity.Document, error) {
+func (ss *searchService) Search(q string, page int) (entity.SearchResult, error) {
     query := valueobject.NewQueryFromString(q)
 
     tokens, err := ss.tokenRepo.GetByTokenNames(query.QueryStrings)
     if err != nil {
-        return []entity.Document{}, err
+        return entity.SearchResult{}, err
     }
 
     var invertedLists [][]entity.InvertedData
@@ -46,17 +46,17 @@ func (ss *searchService) Search(q string) ([]entity.Document, error) {
     }
 
     if len(invertedLists) == 0 {
-        return []entity.Document{}, nil
+        return entity.SearchResult{}, nil
     }
 
-    documentIDs := ranking(invertedLists)
+    documentsN, documentIDs := ranking(invertedLists, page)
 
     documents, _ := ss.documentRepo.GetByIDs(documentIDs)
 
-    return documents, nil
+    return entity.NewSearchResult(q, documents, documentsN, page, 10), nil
 }
 
-func ranking(invertedLists [][]entity.InvertedData) []uint {
+func ranking(invertedLists [][]entity.InvertedData, page int) (int, []uint) {
     // 1番目
     // 1番目の転置データに入っている文書IDは全て検索結果候補
     var candidateDocumentIDs []uint
@@ -79,9 +79,11 @@ func ranking(invertedLists [][]entity.InvertedData) []uint {
         candidateDocumentIDs = tmpCandidateDocumentIDs
     }
 
+    documentsN := len(candidateDocumentIDs)
+
     if len(candidateDocumentIDs) < 10 {
-        return candidateDocumentIDs
+        return documentsN, candidateDocumentIDs
     }
 
-    return candidateDocumentIDs[:10]
+    return documentsN, candidateDocumentIDs[((page-1)*10):(page*10)]
 }

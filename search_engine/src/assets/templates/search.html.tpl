@@ -16,24 +16,42 @@
   </head>
   <body>
     <header class="header">
-      <a class="header-title" href="/">
-        Wikipedia検索
+      <a class="header-title is-pc" href="/">
+        Wiki検索
       </a>
-      <form class="header-search-box" action="/search">
-        <input type="text" name="q" class="search-box" value="{{ .Q }}"/>
+      <form action="/search" method="get">
+        <input class="search-box" type="text" name="q" value="{{ .Q }}"/>
       </form>
     </header>
-    <main class="search-results">
+
+    <main>
       {{ if gt .DocumentsN 0 }}
+      <div class="search-results">
         {{ range .Documents }}
           <div class="search-result">
             <a class="search-result-title" href="{{ .URL }}">{{ .Title }}</a>
             <p class="search-result-description">{{ .Description }}</p>
           </div>
         {{ end }}
+
+        <div class="paging">
+          <ul class="paging-numbers">
+            {{ range .Pages }}
+              {{ if .IsCurrent }}
+                <li class="paging-number current"><a href="{{ .URL }}">{{ .Number }}</a></li>
+              {{ else }}
+                <li class="paging-number"><a href="{{ .URL }}">{{ .Number }}</a></li>
+              {{ end }}
+            {{ end }}
+          </ul>
+        </div>
+      </div>
       {{ else }}
         <p>検索結果が見つかりませんでした。</p>
       {{ end }}
     </main>
+
+    <header class="footer">
+    </header>
   </body>
 </html>

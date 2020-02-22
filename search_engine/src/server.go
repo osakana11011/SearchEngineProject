@@ -6,8 +6,8 @@ import (
     "log"
     "html/template"
     "net/http"
+    "strconv"
 
-    "search_engine_project/search_engine/src/domain/model/entity"
     "search_engine_project/search_engine/src/usecase"
     "search_engine_project/search_engine/src/domain/service"
     "search_engine_project/search_engine/src/infrastructure/persistance/datastore"
@@ -35,18 +35,14 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 func searchHandler(w http.ResponseWriter, r *http.Request) {
     q := r.URL.Query().Get("q")
-
-    // SearchResult は検索結果をテンプレートに渡す構造体
-    type SearchResult struct {
-        Q string
-        DocumentsN int
-        Documents []entity.Document
+    page, _ := strconv.Atoi(r.URL.Query().Get("page"))
+    if page == 0 {
+        page = 1
     }
 
     // 検索して表示
     c.Invoke(func(searchUsecase usecase.SearchUseCase) {
-        documents, _ := searchUsecase.Search(q)
-        searchResult := SearchResult{Q: q, DocumentsN: len(documents), Documents: documents}
+        searchResult, _ := searchUsecase.Search(q, page)
         fmt.Println(searchResult)
 
         tpl := template.Must(template.ParseFiles("assets/templates/search.html.tpl"))
