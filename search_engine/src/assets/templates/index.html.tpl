@@ -25,8 +25,5 @@
       <input type="text" name="q" class="search-box" />
     </form>
   </div>
-
-  <footer class="footer">
-  </footer>
 </body>
 </html>
