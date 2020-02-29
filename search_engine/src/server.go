@@ -4,55 +4,13 @@ import (
     "os"
     "fmt"
     "log"
-    "html/template"
     "net/http"
-    "strconv"
 
-    "search_engine_project/search_engine/src/usecase"
-    "search_engine_project/search_engine/src/domain/service"
-    "search_engine_project/search_engine/src/infrastructure/persistance/datastore"
+    "search_engine_project/search_engine/src/views"
 
     "github.com/joho/godotenv"
-    "go.uber.org/dig"
     _ "github.com/go-sql-driver/mysql"
 )
-
-var c = dig.New()
-func init() {
-    c.Provide(datastore.NewGormDBConnection)
-    c.Provide(datastore.NewTokenRepository)
-    c.Provide(datastore.NewDocumentRepository)
-    c.Provide(datastore.NewInvertedDataRepository)
-
-    c.Provide(service.NewSearchService)
-    c.Provide(usecase.NewSearchUseCase)
-}
-
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-    tpl := template.Must(template.ParseFiles("assets/templates/index.html.tpl"))
-    tpl.Execute(w, nil)
-}
-
-func searchHandler(w http.ResponseWriter, r *http.Request) {
-    q := r.URL.Query().Get("q")
-    page, _ := strconv.Atoi(r.URL.Query().Get("page"))
-    if page == 0 {
-        page = 1
-    }
-
-    // 検索して表示
-    c.Invoke(func(searchUsecase usecase.SearchUseCase) {
-        searchResult, _ := searchUsecase.Search(q, page)
-
-        tpl := template.Must(template.ParseFiles("assets/templates/search.html.tpl"))
-        tpl.Execute(w, searchResult)
-    })
-}
-
-func managementHandler(w http.ResponseWriter, r *http.Request) {
-    tpl := template.Must(template.ParseFiles("assets/templates/management.html.tpl"))
-    tpl.Execute(w, nil)
-}
 
 func main() {
     // dotenvファイルを環境変数にロード
@@ -61,9 +19,13 @@ func main() {
         log.Fatal(fmt.Sprintf("failed load .envfiles/%s.env", os.Getenv("ENV")))
     }
 
+    // assets 以下へのアクセス
     http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets/"))))
-    http.HandleFunc("/", indexHandler)
-    http.HandleFunc("/search/", searchHandler)
-    http.HandleFunc("/management", managementHandler)
+
+    // ページへのアクセス
+    http.HandleFunc("/", views.IndexHandler)
+    http.HandleFunc("/search/", views.SearchHandler)
+    http.HandleFunc("/console", views.ConsoleHandler)
+
     http.ListenAndServe(":3000", nil)
 }

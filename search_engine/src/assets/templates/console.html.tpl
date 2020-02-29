@@ -20,7 +20,8 @@
         Wiki検索
       </a>
     </header>
-    <main>
+
+    <main class="main">
       <div style="width: 600px; height: 400px;">
         <canvas id="documents-graph"></canvas>
       </div>
